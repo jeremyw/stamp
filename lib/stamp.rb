@@ -23,8 +23,15 @@ module Stamp
     TWO_DIGIT_REGEXP       = /\d{2}/
     FOUR_DIGIT_REGEXP      = /\d{4}/
 
-    DATE_DELIMITER_REGEXP  = /(\/|\-)/ # forward slash or dash
+    # DATE_DELIMITER_REGEXP  = /(\/|\-)/ # forward slash or dash
 
+    # OBVIOUS_MINUTES        = 32..59
+    # OBVIOUS_HOURS
+    # OBVIOUS_SECONDS
+
+    OBVIOUS_YEARS          = 60..99
+    OBVIOUS_MONTHS         = 12
+    OBVIOUS_DAYS           = 28..31
 
     def stamp(example)
       strftime(strftime_directives(example))
@@ -40,7 +47,6 @@ module Stamp
         directive = strftime_directive(term, previous_directive)
         directives << (directive || term)
 
-        previous_term = term
         previous_directive = directive unless directive.nil?
       end
 
@@ -66,13 +72,25 @@ module Stamp
         '%Y'
 
       when TWO_DIGIT_REGEXP
-        case previous_directive
-        when '%m', '%b', '%B' # a month
-          '%d' # day with leading zero
-        when '%d', '%e'       # a day
-          '%y' # two-digit year
+        # try to discern obvious intent based on the example value
+        case term.to_i
+        when OBVIOUS_YEARS
+          '%y'
+        when OBVIOUS_MONTHS
+          '%m'
+        when OBVIOUS_DAYS
+          '%d'
         else
-          '%m' # month
+          # the intent isn't obvious based on the example value, so try to
+          # disambiguate based on context
+          case previous_directive
+          when '%m', '%b', '%B' # a month
+            '%d' # day with leading zero
+          when '%d', '%e'       # a day
+            '%y' # two-digit year
+          else
+            '%m' # month
+          end
         end
 
       when ONE_DIGIT_REGEXP

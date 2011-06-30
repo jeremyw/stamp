@@ -19,26 +19,33 @@ date = Date.new(2011, 6, 9)
 date.stamp("March 1, 1999")         # "June  9, 2011"
 date.stamp("Jan 1, 1999")           # "Jun  9, 2011"
 date.stamp("Jan 01")                # "Jun 09"
-date.stamp("Sunday, May 1, 2000")   # "Monday, June  9, 2011"
-date.stamp("Sun Aug 5")             # "Mon Jun  9"
-date.stamp("01/01/99")              # "06/09/11"
-date.stamp("DOB: 01/01/2000")       # "DOB: 06/09/2011"
+date.stamp("Sunday, May 1, 2000")   # "Thursday, June  9, 2011"
+date.stamp("Sun Aug 5")             # "Thu Jun  9"
+date.stamp("12/31/99")              # "06/09/11"
+date.stamp("DOB: 12/31/2000")       # "DOB: 06/09/2011"
 ```
 
 ### Features
 
 * Abbreviated and full names of months and weekdays are recognized.
 * Days with or without a leading zero work instinctively.
-* You can use whatever month, weekday, day, or year value makes sense in your
-  examples.
 * Include any extraneous text you'd like, e.g. "DOB:".
+
+### Disambiguation by value
+
+You can use any month, weekday, day, or year value that makes sense in your
+examples, and stamp can often infer your intent based on context, but there
+may be times that you need to use unambiguous values to make your intent more
+explicit.
+
+For example, "01/09" could refer to January 9, September 1, or
+January 2009. More explicit examples include "12/31", "31/12", and "12/99".
+
+Using unambiguous values will also help people who read the code in the
+future understand your intent.
 
 ### Limitations
 
-* "01/09/99" is assumed to be January 9, not September 1. Patches to make this
-  configurable are welcome. Even better, make it smart enough to disambiguate
-  given an example like 31/01/99, where 31 is obviously not a month.
-* "01-Jan-1999" doesn't work yet (see @wip cucumber scenario). Patches welcome!
 * Support for time formatting by example is coming soon. Patches welcome!
 
 Did I mention? Patches welcome!
@@ -60,6 +67,8 @@ More coming soon, including time formats by example.
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
+* Run `bundle install`
+* Run `rake` to execute the cucumber specs and make sure they all pass
 * Start a feature/bugfix branch
 * Commit and push until you are happy with your contribution
 * Make sure to add tests for it. This is important so I don't break it in a future version unintentionally.
