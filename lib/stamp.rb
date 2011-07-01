@@ -33,26 +33,37 @@ module Stamp
     OBVIOUS_MONTHS         = 12
     OBVIOUS_DAYS           = 28..31
 
+    TIME_REGEXP            = /(\d{1,2}):(\d{2})\s*(a|p)?m?/i
+
     def stamp(example)
       strftime(strftime_directives(example))
     end
 
     def strftime_directives(example)
-      directives = []
+      transform_stamp_example(example).join
+    end
+    private :strftime_directives
+
+    def transform_stamp_example(example)
+      words = []
       previous_directive = nil
 
-      terms = example.split(/\b/)
+      before, time_string, after = example.partition(TIME_REGEXP)
 
+      terms = before.split(/\b/)
       terms.each_with_index do |term, index|
         directive = strftime_directive(term, previous_directive)
-        directives << (directive || term)
+        words << (directive || term)
 
         previous_directive = directive unless directive.nil?
       end
 
-      directives.join
+      # format time string and append
+
+      words += transform_stamp_example(after) unless after.empty?
+      words
     end
-    private :strftime_directives
+    private :transform_stamp_example
 
     def strftime_directive(term, previous_directive=nil)
       case term
@@ -101,4 +112,6 @@ module Stamp
   end
 end
 
+
 Date.send(:include, ::Stamp)
+Time.send(:include, ::Stamp)

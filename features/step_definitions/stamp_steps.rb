@@ -1,13 +1,24 @@
+module StampStepHelpers
+  def month(month_name)
+    month = Date::MONTHNAMES.index(month_name) || Date::ABBR_MONTHNAMES.index(month_name)
+    assert (1..12).include?(month), "Invalid month: #{month_name}"
+    return month
+  end
+end
+World(StampStepHelpers)
+
 Given /^the date (\w+) (\d+), (\d{4})$/ do |month_name, day, year|
-  month = Date::MONTHNAMES.index(month_name) || Date::ABBR_MONTHNAMES.index(month_name)
-  assert (1..12).include?(month), "Invalid month: #{month_name}"
-  @date = Date.new(year.to_i, month, day.to_i)
+  @target = Date.new(year.to_i, month(month_name), day.to_i)
+end
+
+Given /^the time (\w+) (\d+), (\d+) at (\d+):(\d+)$/ do |month_name, day, year, hours, minutes|
+  @target = Time.new(year.to_i, month(month_name), day.to_i, hours.to_i, minutes.to_i)
 end
 
 When /^I stamp the example "([^"]*)"$/ do |example|
-  @formatted_date = @date.stamp(example)
+  @stamped = @target.stamp(example)
 end
 
 Then /^I produce "([^"]*)"$/ do |expected|
-  assert_equal expected, @formatted_date
+  assert_equal expected, @stamped
 end

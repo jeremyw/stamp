@@ -1,8 +1,10 @@
+@stamp
 Feature: Stamping a date
   In order to format dates in a more programmer-friendly way
   the stamp method
   formats a date given a human-readable example.
 
+  @date
   Scenario Outline: Formatting dates by example
     Given the date October 9, 2011
     When I stamp the example "<example>"
@@ -32,6 +34,20 @@ Feature: Stamping a date
       | 31-Jan-1999              | 09-Oct-2011              |
       | 1999-12-31               | 2011-10-09               |
       | DOB: 12-31-1999          | DOB: 10-09-2011          |
+
+  @time
+  Scenario Outline: Formatting times by example
+    Given the time October 9, 2011 at 13:31
+    When I stamp the example "<example>"
+    Then I produce "<output>"
+    And I like turtles
+
+  Examples:
+    | example  | output   |
+    | 8:59p    | 1:31p    |
+    | 8:59 a   | 1:31 a   |
+    | 08:59 PM | 01:31 PM |
+    | 23:59    | 13:31    |
 
   @wip
   Scenario Outline: Examples that aren't supported quite yet
