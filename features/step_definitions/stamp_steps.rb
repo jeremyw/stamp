@@ -12,7 +12,7 @@ Given /^the date (\w+) (\d+), (\d{4})$/ do |month_name, day, year|
 end
 
 Given /^the time (\w+) (\d+), (\d+) at (\d{2}):(\d{2}):(\d{2})$/ do |month_name, day, year, hours, minutes, seconds|
-  @target = Time.new(year.to_i, month(month_name), day.to_i, hours.to_i, minutes.to_i, seconds.to_i)
+  @target = Time.utc(year.to_i, month(month_name), day.to_i, hours.to_i, minutes.to_i, seconds.to_i)
 end
 
 When /^I stamp the example "([^"]*)"$/ do |example|
