@@ -1,6 +1,6 @@
 # stamp
 
-Format dates (and times, soon) based on human-friendly examples, not arcane
+Format dates and times based on human-friendly examples, not arcane
 strftime directives.
 
 [![Build Status](http://travis-ci.org/jeremyw/stamp.png)](http://travis-ci.org/jeremyw/stamp)
