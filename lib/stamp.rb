@@ -43,6 +43,8 @@ module Stamp
     strftime(strftime_format(example))
   end
 
+  alias :stamp_like  :stamp
+  alias :format_like :stamp
 
   private
 

@@ -22,3 +22,7 @@ end
 Then /^I produce "([^"]*)"$/ do |expected|
   assert_equal expected.strip, @stamped.strip
 end
+
+When /^I call "([^"]*)" with "([^"]*)"$/ do |method, arg|
+  @stamped = @target.send(method, arg)
+end
