@@ -37,27 +37,22 @@ Feature: Stamping a date
 
   @time
   Scenario Outline: Formatting times by example
-    Given the time October 9, 2011 at 13:31
+    Given the time October 9, 2011 at 13:31:27
     When I stamp the example "<example>"
     Then I produce "<output>"
     And I like turtles
 
-  Examples:
-    | example  | output   |
-    | 8:59p    | 1:31p    |
-    | 8:59 a   | 1:31 a   |
-    | 08:59 PM | 01:31 PM |
-    | 23:59    | 13:31    |
-
-  @wip
-  Scenario Outline: Examples that aren't supported quite yet
-    Given the date October 9, 2011
-    When I stamp the example "<example>"
-    Then I produce "<output>"
-
     Examples:
-      | example | output |
-      |         |        |
+      | example     | output      |
+      | 8:59 am     | 1:31 pm     |
+      | 8:59am      | 1:31pm      |
+      | 08:59 AM    | 01:31 PM    |
+      | 08:59 PM    | 01:31 PM    |
+      | 23:59       | 13:31       |
+      | 8:59:59 am  | 1:31:27 pm  |
+      | 08:59:59 AM | 01:31:27 PM |
+      | 08:59:59 PM | 01:31:27 PM |
+      | 23:59:59    | 13:31:27    |
 
   Scenario: strftime directives just get passed through
     Given the date December 21, 2012
@@ -68,3 +63,16 @@ Feature: Stamping a date
     Given the date December 9, 2011
     When I stamp the example "Just some plain old text."
     Then I produce "Just some plain old text."
+
+
+  @wip
+  Scenario Outline: Examples that aren't supported yet
+    Given the date October 9, 2011
+    When I stamp the example "<example>"
+    Then I produce "<output>"
+
+    Examples:
+      | example | output |
+      | 8 am    | 1 pm   |
+      | 8am     | 1pm    |
+      | 8AM     | 1PM    |
