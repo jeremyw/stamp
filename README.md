@@ -1,6 +1,7 @@
 # stamp
 
-Format dates (and times, soon) based on examples, not arcane strftime directives.
+Format dates (and times, soon) based on human-friendly examples, not arcane
+strftime directives.
 
 [![Build Status](http://travis-ci.org/jeremyw/stamp.png)](http://travis-ci.org/jeremyw/stamp)
 
@@ -10,9 +11,12 @@ Just `gem install stamp`, or add stamp to your Gemfile and `bundle install`.
 
 ## Usage
 
-Date objects get a powerful new method: #stamp. Provide an example date string
-with whatever month, day, year, and weekday parts you'd like, and your date
-will be formatted accordingly:
+Your Ruby dates and times get a powerful new method: `stamp`.
+
+### Dates
+
+Give `Date#stamp` an example date string with whatever month, day, year,
+and weekday parts you'd like, and your date will be formatted accordingly:
 
 ```ruby
 date = Date.new(2011, 6, 9)
@@ -25,7 +29,21 @@ date.stamp("12/31/99")              # "06/09/11"
 date.stamp("DOB: 12/31/2000")       # "DOB: 06/09/2011"
 ```
 
-### Features
+### Times
+
+`Time#stamp` supports the same kinds of examples as `Date`, but also formats
+hours, minutes, and seconds when it sees colon-separated values:
+
+```ruby
+time = Time.utc(2011, 6, 9, 20, 52, 30)
+time.stamp("3:00 AM")               # " 8:52 PM"
+time.stamp("01:00:00 AM")           # "08:52:30 PM"
+time.stamp("23:59")                 # "20:52"
+time.stamp("23:59:59")              # "20:52:30"
+time.stamp("Jan 1 at 01:00 AM")     # "Jun  9 at 08:52 PM"
+```
+
+## Features
 
 * Abbreviated and full names of months and weekdays are recognized.
 * Days with or without a leading zero work instinctively.
@@ -46,21 +64,18 @@ future understand your intent.
 
 ### Limitations
 
-* Support for time formatting by example is coming soon. Patches welcome!
-
-Did I mention? Patches welcome!
+* Time zone support hasn't been implemented. Patches welcome!
+* DateTime support hasn't been implemented. Patches welcome!
 
 If you need more obscure formatting options, you can include any valid
 [strftime](http://strfti.me) directives in your example string, and they'll
 just be passed along:
 
 ```ruby
-date.stamp("Week #%U, %Y")         # "Week #23, 2011"
+Date.today.stamp("Week #%U, 1999")         # "Week #23, 2011"
 ````
 
 [Check out http://strfti.me](http://strfti.me) for more ideas.
-
-More coming soon, including time formats by example.
 
 ## Contributing to stamp
 
