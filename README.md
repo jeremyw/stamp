@@ -65,7 +65,9 @@ future understand your intent.
 ### Limitations
 
 * Time zone support hasn't been implemented. Patches welcome!
-* DateTime support hasn't been implemented. Patches welcome!
+* DateTime should inherit stamp behavior from Date, but it hasn't been thoroughly tested. Patches welcome!
+
+### Advanced Usage
 
 If you need more obscure formatting options, you can include any valid
 [strftime](http://strfti.me) directives in your example string, and they'll
