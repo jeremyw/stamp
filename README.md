@@ -77,7 +77,7 @@ just be passed along:
 Date.today.stamp("Week #%U, 1999")         # "Week #23, 2011"
 ````
 
-[Check out http://strfti.me](http://strfti.me) for more ideas.
+Check out [http://strfti.me](http://strfti.me) for more ideas.
 
 ## Contributing to stamp
 
