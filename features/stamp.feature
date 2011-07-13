@@ -63,6 +63,11 @@ Feature: Stamping a date
     When I stamp the example "Just some plain old text."
     Then I produce "Just some plain old text."
 
+  Scenario: Plain text just gets passed through
+   Given the date December 9, 2011
+   When I stamp the example "Maralyn Monroe is sexy."
+   Then I produce "Maralyn Monroe is sexy."
+
 
   @wip
   Scenario Outline: Examples that aren't supported yet
