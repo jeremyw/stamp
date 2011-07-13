@@ -68,6 +68,31 @@ Feature: Stamping a date
    When I stamp the example "Maralyn Monroe is sexy."
    Then I produce "Maralyn Monroe is sexy."
 
+  Scenario Outline: support cpan date formats
+    # see http://search.cpan.org/~roode/Time-Format-1.02/Format.pm#VARIABLE
+    Given the time January 9, 2011 at 13:31:27
+    When I stamp the example "<example>"
+    Then I produce "<output>"
+    And I like turtles
+
+    Examples:
+      | example     | output      |
+      | Month day   | January  9  |
+      | Month d     | January  9   |
+      | Mon d       | Jan  9       |
+      | month dd    | January 09  |
+      | Month day, year| January  9, 2011|
+      | Mon         | Jan         |
+      | m/d/yy      | 01/ 9/11    |
+      | mm/dd/yyyy  | 01/09/2011  |
+      | dd/mm/yyyy  | 09/01/2011  |
+      | yyyy-mm-dd  | 2011-01-09  |
+      | Weekday     | Sunday      |
+      | H:MM AM     | 1:31 PM     |
+      | HH:MM       | 13:31       |
+      | HH:MM:SS    | 13:31:27    |
+      | H:MM AM     | 1:31 PM     |
+      | HH:MM       | 13:31       |
 
   @wip
   Scenario Outline: Examples that aren't supported yet
@@ -82,3 +107,7 @@ Feature: Stamping a date
       | 8AM     | 1PM    |
       | 8:59 am     | 1:31 PM     |
       | 8:59am      | 1:31PM      |
+      | H:MMAM      | 1:31PM      |
+      | 19991230    | 20110809    |
+      | yyyymmdd    | 20110109    |
+      | yymmdd      | 110109      |

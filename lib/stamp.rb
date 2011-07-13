@@ -3,19 +3,32 @@ require "date"
 require "time"
 
 module Stamp
-  MONTHNAMES_REGEXP      = /(#{Date::MONTHNAMES.compact.join('|')})/i
-  ABBR_MONTHNAMES_REGEXP = /(#{Date::ABBR_MONTHNAMES.compact.join('|')})/i
-  DAYNAMES_REGEXP        = /(#{Date::DAYNAMES.join('|')})/i
-  ABBR_DAYNAMES_REGEXP   = /(#{Date::ABBR_DAYNAMES.join('|')})/i
+  MONTHNAMES_REGEXP      = /^(#{(Date::MONTHNAMES + %w(Month)).compact.join('|')})$/i
+  ABBR_MONTHNAMES_REGEXP = /^(#{(Date::ABBR_MONTHNAMES + %w(mon)).compact.join('|')})$/i
+  DAYNAMES_REGEXP        = /^(#{(Date::DAYNAMES + %w(Weekday)).join('|')})$/i
+  ABBR_DAYNAMES_REGEXP   = /^(#{(Date::ABBR_DAYNAMES - %w(mon)).join('|')})$/i
 
-  ONE_DIGIT_REGEXP       = /\d{1}/
-  TWO_DIGIT_REGEXP       = /\d{2}/
-  FOUR_DIGIT_REGEXP      = /\d{4}/
+  ONE_DIGIT_REGEXP       = /^\d{1}$/
+  TWO_DIGIT_REGEXP       = /^\d{2}$/
+  FOUR_DIGIT_REGEXP      = /^(\d{4}|yyyy|year)$/i
 
-  TIME_REGEXP            = /(\d{1,2})(:)(\d{2})(\s*)(:)?(\d{2})?(\s*)?([ap]m)?/i
+  TWO_DIGITYEAR          = /^([6-9]\d|yy|YY)$/
+  TWO_DIGITMONTH         = /^(m|mm|M|MM12)$/
+  SINGLEDAY_REGEXP       = /^(day|D|d)$/i
+  DOUBLEDAY_REGEXP       = /^(dd|DD)$/i
 
-  MERIDIAN_LOWER_REGEXP  = /(a|p)m/
-  MERIDIAN_UPPER_REGEXP  = /(A|P)M/
+  SINGLEHOUR_REGEXP      = /^(h)$/i
+  DOUBLEHOUR_REGEXP      = /^(hh)$/i
+
+  DOUBLEMINUTE_REGEXP    = /^(mm)$/i
+
+  SECONDS_REGEXP         = /^(ss)$/i
+
+  TIME_REGEXP            = /([0-9hH]{1,2})(:)([0-9mM]{2})(\s*)(:)?([0-9sS]{2})?(\s*)?([apAP]\.?[mM]\.?)?/i
+
+  #NOTE: this does not work for 1.8.7/ree Time class
+  MERIDIAN_LOWER_REGEXP  = /^(a|p)m$/ #a.m. Am
+  MERIDIAN_UPPER_REGEXP  = /^(A|P)M$/i
 
   # Disambiguate based on value
   OBVIOUS_YEARS          = 60..99
@@ -53,6 +66,7 @@ module Stamp
     before, time_example, after = example.partition(TIME_REGEXP)
 
     # transform any date tokens to strftime directives
+    #splitting on a non % \b
     words = strftime_directives(before.split(/\b/)) do |token, previous_directive|
       strftime_date_directive(token, previous_directive)
     end
@@ -88,6 +102,15 @@ module Stamp
     when MERIDIAN_UPPER_REGEXP
       '%p'
 
+    when SINGLEHOUR_REGEXP
+      '%l'
+    when DOUBLEHOUR_REGEXP
+      '%H'
+    when DOUBLEMINUTE_REGEXP
+      '%M'
+    when SECONDS_REGEXP
+      '%S'
+
     when TWO_DIGIT_REGEXP
       TWO_DIGIT_TIME_SUCCESSION[previous_directive] ||
         case token.to_i
@@ -118,6 +141,14 @@ module Stamp
 
     when FOUR_DIGIT_REGEXP
       '%Y'
+    when TWO_DIGITYEAR
+      '%y'
+    when TWO_DIGITMONTH
+      '%m'
+    when SINGLEDAY_REGEXP
+      '%e'
+    when DOUBLEDAY_REGEXP
+      '%d'
 
     when TWO_DIGIT_REGEXP
       # try to discern obvious intent based on the example value
