@@ -53,15 +53,17 @@ Feature: Stamping a date
       | 08:59:59 PM | 01:31:27 PM |
       | 23:59:59    | 13:31:27    |
 
+
   Scenario: strftime directives just get passed through
     Given the date December 21, 2012
     When I stamp the example "John Cusack was in a movie about %b %d, %Y, but it wasn't very good."
     Then I produce "John Cusack was in a movie about Dec 21, 2012, but it wasn't very good."
 
+
   Scenario: Plain text just gets passed through
-    Given the date December 9, 2011
-    When I stamp the example "Just some plain old text."
-    Then I produce "Just some plain old text."
+    Given the date June 1, 1926
+    When I stamp the example "Marilyn Monroe was born on January 1, 1999."
+    Then I produce "Marilyn Monroe was born on June  1, 1926."
 
 
   @wip

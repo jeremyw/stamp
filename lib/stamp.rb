@@ -3,19 +3,19 @@ require "date"
 require "time"
 
 module Stamp
-  MONTHNAMES_REGEXP      = /(#{Date::MONTHNAMES.compact.join('|')})/i
-  ABBR_MONTHNAMES_REGEXP = /(#{Date::ABBR_MONTHNAMES.compact.join('|')})/i
-  DAYNAMES_REGEXP        = /(#{Date::DAYNAMES.join('|')})/i
-  ABBR_DAYNAMES_REGEXP   = /(#{Date::ABBR_DAYNAMES.join('|')})/i
+  MONTHNAMES_REGEXP      = /^(#{Date::MONTHNAMES.compact.join('|')})$/i
+  ABBR_MONTHNAMES_REGEXP = /^(#{Date::ABBR_MONTHNAMES.compact.join('|')})$/i
+  DAYNAMES_REGEXP        = /^(#{Date::DAYNAMES.join('|')})$/i
+  ABBR_DAYNAMES_REGEXP   = /^(#{Date::ABBR_DAYNAMES.join('|')})$/i
 
-  ONE_DIGIT_REGEXP       = /\d{1}/
-  TWO_DIGIT_REGEXP       = /\d{2}/
-  FOUR_DIGIT_REGEXP      = /\d{4}/
+  ONE_DIGIT_REGEXP       = /^\d{1}$/
+  TWO_DIGIT_REGEXP       = /^\d{2}$/
+  FOUR_DIGIT_REGEXP      = /^\d{4}$/
 
-  TIME_REGEXP            = /(\d{1,2})(:)(\d{2})(\s*)(:)?(\d{2})?(\s*)?([ap]m)?/i
+  TIME_REGEXP            = /^(\d{1,2})(:)(\d{2})(\s*)(:)?(\d{2})?(\s*)?([ap]m)?$/i
 
-  MERIDIAN_LOWER_REGEXP  = /(a|p)m/
-  MERIDIAN_UPPER_REGEXP  = /(A|P)M/
+  MERIDIAN_LOWER_REGEXP  = /^(a|p)m$/
+  MERIDIAN_UPPER_REGEXP  = /^(A|P)M$/
 
   # Disambiguate based on value
   OBVIOUS_YEARS          = 60..99
