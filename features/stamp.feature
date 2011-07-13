@@ -44,12 +44,12 @@ Feature: Stamping a date
 
     Examples:
       | example     | output      |
-      | 8:59 am     | 1:31 pm     |
-      | 8:59am      | 1:31pm      |
+      | 8:59 AM     | 1:31 PM     |
+      | 8:59AM      | 1:31PM      |
       | 08:59 AM    | 01:31 PM    |
       | 08:59 PM    | 01:31 PM    |
       | 23:59       | 13:31       |
-      | 8:59:59 am  | 1:31:27 pm  |
+      | 8:59:59 AM  | 1:31:27 PM  |
       | 08:59:59 AM | 01:31:27 PM |
       | 08:59:59 PM | 01:31:27 PM |
       | 23:59:59    | 13:31:27    |
@@ -76,3 +76,5 @@ Feature: Stamping a date
       | 8 am    | 1 pm   |
       | 8am     | 1pm    |
       | 8AM     | 1PM    |
+      | 8:59 am     | 1:31 PM     |
+      | 8:59am      | 1:31PM      |
