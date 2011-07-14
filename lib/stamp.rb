@@ -83,7 +83,12 @@ module Stamp
   def strftime_time_directive(token, previous_directive)
     case token
     when MERIDIAN_LOWER_REGEXP
-      '%P'
+      if RUBY_VERSION =~ /^1.8/ && self.is_a?(Time)
+        # 1.8.7 doesn't implement %P
+        self.strftime("%p").downcase
+      else
+        '%P'
+      end
 
     when MERIDIAN_UPPER_REGEXP
       '%p'
