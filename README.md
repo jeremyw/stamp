@@ -20,13 +20,13 @@ and weekday parts you'd like, and your date will be formatted accordingly:
 
 ```ruby
 date = Date.new(2011, 6, 9)
-date.stamp("March 1, 1999")         # "June  9, 2011"
-date.stamp("Jan 1, 1999")           # "Jun  9, 2011"
-date.stamp("Jan 01")                # "Jun 09"
-date.stamp("Sunday, May 1, 2000")   # "Thursday, June  9, 2011"
-date.stamp("Sun Aug 5")             # "Thu Jun  9"
-date.stamp("12/31/99")              # "06/09/11"
-date.stamp("DOB: 12/31/2000")       # "DOB: 06/09/2011"
+date.stamp("March 1, 1999")         #=> "June  9, 2011"
+date.stamp("Jan 1, 1999")           #=> "Jun  9, 2011"
+date.stamp("Jan 01")                #=> "Jun 09"
+date.stamp("Sunday, May 1, 2000")   #=> "Thursday, June  9, 2011"
+date.stamp("Sun Aug 5")             #=> "Thu Jun  9"
+date.stamp("12/31/99")              #=> "06/09/11"
+date.stamp("DOB: 12/31/2000")       #=> "DOB: 06/09/2011"
 ```
 
 ### Times
@@ -36,11 +36,11 @@ hours, minutes, and seconds when it sees colon-separated values:
 
 ```ruby
 time = Time.utc(2011, 6, 9, 20, 52, 30)
-time.stamp("3:00 AM")               # " 8:52 PM"
-time.stamp("01:00:00 AM")           # "08:52:30 PM"
-time.stamp("23:59")                 # "20:52"
-time.stamp("23:59:59")              # "20:52:30"
-time.stamp("Jan 1 at 01:00 AM")     # "Jun  9 at 08:52 PM"
+time.stamp("3:00 AM")               #=> " 8:52 PM"
+time.stamp("01:00:00 AM")           #=> "08:52:30 PM"
+time.stamp("23:59")                 #=> "20:52"
+time.stamp("23:59:59")              #=> "20:52:30"
+time.stamp("Jan 1 at 01:00 AM")     #=> "Jun  9 at 08:52 PM"
 ```
 
 ## Features
@@ -71,6 +71,24 @@ the case, the following aliases are available:
 * `stamp_like`
 * `format_like`
 
+### Rails Integration
+
+Stamp makes it easy to configure your application's common date and time
+formats in a more self-documenting way with the `strftime_format` method:
+
+```ruby
+# config/initializers/time_formats.rb
+Date::DATE_FORMATS[:short]    = Stamp.strftime_format("Mon Jan 1")
+Time::DATE_FORMATS[:military] = Stamp.strftime_format("23:59")
+```
+
+To use your formats:
+
+```ruby
+Date.today.to_s_(:short)  #=> "Sat Jul 16"
+Time.now.to_s(:military)  #=> "15:35"
+```
+
 ### Limitations
 
 * Time zone support hasn't been implemented. Patches welcome!
@@ -83,7 +101,7 @@ If you need more obscure formatting options, you can include any valid
 just be passed along:
 
 ```ruby
-Date.today.stamp("Week #%U, 1999")         # "Week #23, 2011"
+Date.today.stamp("Week #%U, 1999") #=> "Week #23, 2011"
 ````
 
 Check out [http://strfti.me](http://strfti.me) for more ideas.
