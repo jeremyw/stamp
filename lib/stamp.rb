@@ -12,7 +12,7 @@ module Stamp
   TWO_DIGIT_REGEXP       = /^\d{2}$/
   FOUR_DIGIT_REGEXP      = /^\d{4}$/
 
-  TIME_REGEXP            = /^(\d{1,2})(:)(\d{2})(\s*)(:)?(\d{2})?(\s*)?([ap]m)?$/i
+  TIME_REGEXP            = /(\d{1,2})(:)(\d{2})(\s*)(:)?(\d{2})?(\s*)?([ap]m)?/i
 
   MERIDIAN_LOWER_REGEXP  = /^(a|p)m$/
   MERIDIAN_UPPER_REGEXP  = /^(A|P)M$/
