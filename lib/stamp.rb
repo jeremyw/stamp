@@ -1,9 +1,25 @@
-require "stamp/translator"
-require "stamp/version"
 require "date"
 require "time"
 
+require "stamp/translator"
+require "stamp/version"
+
 module Stamp
+
+  # Transforms the given example dates/time format to a format string
+  # suitable for strftime.
+  #
+  # @param  [String] example a human-friendly date/time example
+  # @param  [#strftime] the Date or Time to be formatted. Optional, but may
+  #                     be used to support certain edge cases
+  # @return [String] a strftime-friendly format
+  #
+  # @example
+  #   Stamp.strftime_format("Jan 1, 1999") #=> "%b %e, %Y"
+  def self.strftime_format(example, target=nil)
+    Stamp::StrftimeTranslator.new(target).translate(example)
+  end
+
   # Formats a date/time using a human-friendly example as a template.
   #
   # @param  [String] example a human-friendly date/time example
@@ -17,7 +33,7 @@ module Stamp
   alias :stamp_like  :stamp
   alias :format_like :stamp
 
-  # Transforms the given string with example dates/times to a format string
+  # Transforms the given example date/time format to a format string
   # suitable for strftime.
   #
   # @param  [String] example a human-friendly date/time example
@@ -26,10 +42,12 @@ module Stamp
   # @example
   #   Date.today.strftime_format("Jan 1, 1999") #=> "%b %e, %Y"
   def strftime_format(example)
-    Stamp::StrftimeTranslator.new(self).translate(example)
+    # delegate to the class method, providing self as a target value to
+    # support certain edge cases
+    Stamp.strftime_format(example, self)
   end
-end
 
+end
 
 Date.send(:include, ::Stamp)
 Time.send(:include, ::Stamp)
