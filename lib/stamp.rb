@@ -46,8 +46,6 @@ module Stamp
   alias :stamp_like  :stamp
   alias :format_like :stamp
 
-  private
-
   # Transforms the given string with example dates/times to a format string
   # suitable for strftime.
   def strftime_format(example)
@@ -71,6 +69,8 @@ module Stamp
     words << strftime_format(after) unless after.empty?
     words.join
   end
+
+  private
 
   # Transforms tokens that look like date/time parts to strftime directives.
   def strftime_directives(tokens)
