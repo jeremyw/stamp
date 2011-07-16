@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["jeremy@weiskotten.com"]
   s.homepage    = "https://github.com/jeremyw/stamp"
   s.summary     = %Q{Date and time formatting for humans.}
-  s.description = %Q{Format dates and times based on examples, not arcane strftime directives.}
+  s.description = %Q{Format dates and times based on human-friendly examples, not arcane strftime directives.}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
