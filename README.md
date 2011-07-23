@@ -85,7 +85,7 @@ Time::DATE_FORMATS[:military] = Stamp.strftime_format("23:59")
 To use your formats:
 
 ```ruby
-Date.today.to_s_(:short)  #=> "Sat Jul 16"
+Date.today.to_s(:short)  #=> "Sat Jul 16"
 Time.now.to_s(:military)  #=> "15:35"
 ```
 
