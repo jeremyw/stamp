@@ -13,6 +13,13 @@ Just `gem install stamp`, or add stamp to your Gemfile and `bundle install`.
 
 Your Ruby dates and times get a powerful new method: `stamp`.
 
+You might be concerned that "stamp" isn't descriptive enough for developers
+reading your code who aren't familiar with this gem. If that's the case, the
+following aliases are available:
+
+* `stamp_like`
+* `format_like`
+
 ### Dates
 
 Give `Date#stamp` an example date string with whatever month, day, year,
@@ -68,15 +75,6 @@ January 2009. More explicit examples include "12/31", "31/12", and "12/99".
 
 Using unambiguous values will also help people who read the code in the
 future understand your intent.
-
-### Aliases
-
-You might be concerned that the method name "stamp" isn't descriptive enough
-for developers reading your code who aren't familiar with this gem. If that's
-the case, the following aliases are available:
-
-* `stamp_like`
-* `format_like`
 
 ### Rails Integration
 
