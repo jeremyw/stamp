@@ -9,7 +9,6 @@ Feature: Stamping a date
     Given the date September 8, 2011
     When I stamp the example "<example>"
     Then I produce "<output>"
-      And I like turtles
 
     Examples:
       | example                  | output                       |
@@ -39,7 +38,6 @@ Feature: Stamping a date
     Given the time September 8, 2011 at 13:31:27
     When I stamp the example "<example>"
     Then I produce "<output>"
-      And I like turtles
 
     Examples:
       | example     | output      |
@@ -59,7 +57,6 @@ Feature: Stamping a date
     Given the time September 8, 2011 at 13:31:27
     When I stamp the example "<example>"
     Then I produce "<output>"
-      And I like turtles
 
     Examples:
       | example                         | output                            |
