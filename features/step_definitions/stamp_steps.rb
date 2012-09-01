@@ -1,8 +1,6 @@
 module StampStepHelpers
   def month(month_name)
-    month = Date::MONTHNAMES.index(month_name) || Date::ABBR_MONTHNAMES.index(month_name)
-    assert (1..12).include?(month), "Invalid month: #{month_name}"
-    return month
+    Date::MONTHNAMES.index(month_name) || Date::ABBR_MONTHNAMES.index(month_name)
   end
 end
 World(StampStepHelpers)
