@@ -19,7 +19,7 @@ module Stamp
     # Disambiguate based on value
     OBVIOUS_YEARS          = 60..99
     OBVIOUS_MONTHS         = 12
-    OBVIOUS_DAYS           = 28..31
+    OBVIOUS_DAYS           = 24..31
     OBVIOUS_24_HOUR        = 13..23
 
     TWO_DIGIT_DATE_SUCCESSION = {
