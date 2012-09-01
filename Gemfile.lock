@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stamp (0.1.6)
+    stamp (0.2.0)
 
 GEM
   remote: http://rubygems.org/
