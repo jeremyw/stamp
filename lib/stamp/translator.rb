@@ -14,6 +14,8 @@ module Stamp
     MERIDIAN_LOWER_REGEXP  = /^(a|p)m$/
     MERIDIAN_UPPER_REGEXP  = /^(A|P)M$/
 
+    ORDINAL_DAY_REGEXP     = /^(\d{1,2})(st|nd|rd|th)$/
+
     # Disambiguate based on value
     OBVIOUS_YEARS          = 60..99
     OBVIOUS_MONTHS         = 12
@@ -37,6 +39,20 @@ module Stamp
 
     def initialize(target_date_or_time)
       @target = target_date_or_time
+    end
+
+    # Cribbed from ActiveSupport to format ordinal days (1st, 2nd, 23rd etc).
+    def ordinalize(number)
+      if (11..13).include?(number.to_i % 100)
+        "#{number}th"
+      else
+        case number.to_i % 10
+        when 1; "#{number}st"
+        when 2; "#{number}nd"
+        when 3; "#{number}rd"
+        else    "#{number}th"
+        end
+      end
     end
 
     def translate(example)
@@ -114,6 +130,9 @@ module Stamp
 
       when FOUR_DIGIT_REGEXP
         '%Y'
+
+      when ORDINAL_DAY_REGEXP
+        ordinalize(@target.day)
 
       when TWO_DIGIT_REGEXP
         # try to discern obvious intent based on the example value

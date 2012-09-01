@@ -33,6 +33,36 @@ Feature: Stamping a date
       | 1999-12-31               | 2011-09-08                   |
       | DOB: 12-31-1999          | DOB: 09-08-2011              |
 
+  @date
+  Scenario Outline: Formatting dates with ordinal days
+    Given the date <date>
+    When I stamp the example "<example>"
+    Then I produce "<output>"
+
+    Examples:
+      | date         | example           | output               |
+      | Jan 1, 1999  | July 4th          | January 1st          |
+      | Jan 2, 1999  | Dec 3rd           | Jan 2nd              |
+      | Jan 3, 1999  | Dec 2nd           | Jan 3rd              |
+      | Jan 4, 1999  | Jul 1st           | Jan 4th              |
+      | Jan 5, 1999  | Dec 1st           | Jan 5th              |
+      | Jan 6, 1999  | Dec 1st           | Jan 6th              |
+      | Jan 7, 1999  | Dec 1st           | Jan 7th              |
+      | Jan 8, 1999  | Dec 1st           | Jan 8th              |
+      | Jan 9, 1999  | Dec 1st           | Jan 9th              |
+      | Jan 10, 1999 | Dec 1st           | Jan 10th             |
+      | Jan 11, 1999 | Dec 1st           | Jan 11th             |
+      | Jan 12, 1999 | Dec 1st           | Jan 12th             |
+      | Jan 13, 1999 | Dec 1st           | Jan 13th             |
+      | Jan 14, 1999 | Dec 1st           | Jan 14th             |
+      | Jan 20, 1999 | Dec 1st           | Jan 20th             |
+      | Jan 21, 1999 | Dec 1st           | Jan 21st             |
+      | Jan 22, 1999 | Dec 1st           | Jan 22nd             |
+      | Jan 23, 1999 | Dec 1st           | Jan 23rd             |
+      | Jan 24, 1999 | Dec 1st           | Jan 24th             |
+      | Jan 1, 1999  | 4th of July       | 1st of January       |
+      | Jan 1, 1999  | 4th of July, 1999 | 1st of January, 1999 |
+
   @time
   Scenario Outline: Formatting times by example
     Given the time September 8, 2011 at 13:31:27

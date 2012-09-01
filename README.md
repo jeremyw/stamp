@@ -29,6 +29,13 @@ date.stamp("12/31/99")              #=> "06/09/11"
 date.stamp("DOB: 12/31/2000")       #=> "DOB: 06/09/2011"
 ```
 
+It even formats ordinal days!
+
+```ruby
+date.stamp("November 5th")          #=> "June 9th"
+date.stamp("1st of Jan")            #=> "9th of Jun"
+```
+
 ### Times
 
 `Time#stamp` supports the same kinds of examples as `Date`, but also formats
@@ -85,7 +92,7 @@ Time::DATE_FORMATS[:military] = Stamp.strftime_format("23:59")
 To use your formats:
 
 ```ruby
-Date.today.to_s(:short)  #=> "Sat Jul 16"
+Date.today.to_s(:short)   #=> "Sat Jul 16"
 Time.now.to_s(:military)  #=> "15:35"
 ```
 
