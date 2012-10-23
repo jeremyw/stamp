@@ -3,7 +3,7 @@
 Format dates and times based on human-friendly examples, not arcane
 strftime directives.
 
-[![Build Status](http://travis-ci.org/jeremyw/stamp.png)](http://travis-ci.org/jeremyw/stamp)
+[![Build Status](https://secure.travis-ci.org/jeremyw/stamp.png)](http://travis-ci.org/jeremyw/stamp)
 
 ## Installation
 
