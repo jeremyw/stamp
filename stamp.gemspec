@@ -12,10 +12,7 @@ Gem::Specification.new do |s|
   s.description = %Q{Format dates and times based on human-friendly examples, not arcane strftime directives.}
 
   s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.test_files    = `git ls-files -- features/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-
-  s.add_development_dependency "cucumber"
-  s.add_development_dependency "rake"
 end
