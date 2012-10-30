@@ -18,6 +18,8 @@ Feature: Stamping a date
       | Jan 01                   | Sep 08                       |
       | Jan 10                   | Sep 08                       |
       | Jan 1, 1999              | Sep  8, 2011                 |
+      | Jan 12, 1999             | Sep 08, 2011                 |
+      | 13 January 1999          | 08 September 2011            |
       | Monday                   | Thursday                     |
       | Tue, Jan 1               | Thu, Sep  8                  |
       | Tuesday, January 1, 1999 | Thursday, September  8, 2011 |

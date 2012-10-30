@@ -19,22 +19,24 @@ module Stamp
     # Disambiguate based on value
     OBVIOUS_YEARS          = 60..99
     OBVIOUS_MONTHS         = 12
-    OBVIOUS_DAYS           = 24..31
+    OBVIOUS_DAYS           = 13..31
     OBVIOUS_24_HOUR        = 13..23
 
+    OBVIOUS_DATE_MAP = {
+      OBVIOUS_YEARS  => '%y',
+      OBVIOUS_MONTHS => '%m',
+      OBVIOUS_DAYS   => '%d'
+    }
+
     TWO_DIGIT_DATE_SUCCESSION = {
-      '%m' => '%d',
-      '%b' => '%d',
-      '%B' => '%d',
-      '%d' => '%y',
-      '%e' => '%y'
+      :month => '%d',
+      :day   => '%y',
+      :year  => '%m'
     }
 
     TWO_DIGIT_TIME_SUCCESSION = {
-      '%H' => '%M',
-      '%I' => '%M',
-      '%l' => '%M',
-      '%M' => '%S'
+      :hour   => '%M',
+      :minute => '%S'
     }
 
     def initialize(target_date_or_time)
@@ -60,15 +62,15 @@ module Stamp
       before, time_example, after = example.partition(TIME_REGEXP)
 
       # transform any date tokens to strftime directives
-      words = strftime_directives(before.split(/\b/)) do |token, previous_directive|
-        strftime_date_directive(token, previous_directive)
+      words = strftime_directives(before.split(/\b/)) do |token, previous_part|
+        strftime_date_directive(token, previous_part)
       end
 
       # transform the example time string to strftime directives
       unless time_example.empty?
         time_parts = time_example.scan(TIME_REGEXP).first
-        words += strftime_directives(time_parts) do |token, previous_directive|
-          strftime_time_directive(token, previous_directive)
+        words += strftime_directives(time_parts) do |token, previous_part|
+          strftime_time_directive(token, previous_part)
         end
       end
 
@@ -77,17 +79,35 @@ module Stamp
       words.join
     end
 
+    # Returns symbolic date part for given strftime directive.
+    def date_part(strftime_directive)
+      case strftime_directive
+      when '%b', '%B', '%m'
+        :month
+      when '%d', '%e'
+        :day
+      when '%y', '%Y'
+        :year
+      when '%H', '%I', '%l'
+        :hour
+      when '%M'
+        :minute
+      when '%S'
+        :second
+      end
+    end
+
     # Transforms tokens that look like date/time parts to strftime directives.
     def strftime_directives(tokens)
-      previous_directive = nil
+      previous_part = nil
       tokens.map do |token|
-        directive = yield(token, previous_directive)
-        previous_directive = directive unless directive.nil?
+        directive = yield(token, previous_part)
+        previous_part = date_part(directive) unless directive.nil?
         directive || token
       end
     end
 
-    def strftime_time_directive(token, previous_directive)
+    def strftime_time_directive(token, previous_part)
       case token
       when MERIDIAN_LOWER_REGEXP
         if RUBY_VERSION =~ /^1.8/ && @target.is_a?(Time)
@@ -101,7 +121,7 @@ module Stamp
         '%p'
 
       when TWO_DIGIT_REGEXP
-        TWO_DIGIT_TIME_SUCCESSION[previous_directive] ||
+        TWO_DIGIT_TIME_SUCCESSION[previous_part] ||
           case token.to_i
           when OBVIOUS_24_HOUR
             '%H' # 24-hour clock
@@ -114,7 +134,7 @@ module Stamp
       end
     end
 
-    def strftime_date_directive(token, previous_directive)
+    def strftime_date_directive(token, previous_part)
       case token
       when MONTHNAMES_REGEXP
         '%B'
@@ -135,19 +155,20 @@ module Stamp
         ordinalize(@target.day)
 
       when TWO_DIGIT_REGEXP
-        # try to discern obvious intent based on the example value
-        case token.to_i
-        when OBVIOUS_YEARS
-          '%y'
-        when OBVIOUS_MONTHS
-          '%m'
-        when OBVIOUS_DAYS
-          '%d'
-        else
-          # the intent isn't obvious based on the example value, so try to
-          # disambiguate based on context
-          TWO_DIGIT_DATE_SUCCESSION[previous_directive] || '%m'
+        value = token.to_i
+
+        obvious_mappings =
+          OBVIOUS_DATE_MAP.reject { |k,v| date_part(v) == previous_part }
+
+        obvious_directive = obvious_mappings.find do |range, directive|
+          break directive if range === value
         end
+
+        # if the intent isn't obvious based on the example value, try to
+        # disambiguate based on context
+        obvious_directive ||
+          TWO_DIGIT_DATE_SUCCESSION[previous_part] ||
+          '%m'
 
       when ONE_DIGIT_REGEXP
         '%e' # day without leading zero
