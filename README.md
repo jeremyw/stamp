@@ -46,7 +46,7 @@ date.stamp("1st of Jan")            #=> "9th of Jun"
 ### Times
 
 `Time#stamp` supports the same kinds of examples as `Date`, but also formats
-hours, minutes, and seconds when it sees colon-separated values:
+hours, minutes, and seconds when it sees colon-separated values.
 
 ```ruby
 time = Time.utc(2011, 6, 9, 20, 52, 30)
@@ -55,12 +55,15 @@ time.stamp("01:00:00 AM")           #=> "08:52:30 PM"
 time.stamp("23:59")                 #=> "20:52"
 time.stamp("23:59:59")              #=> "20:52:30"
 time.stamp("Jan 1 at 01:00 AM")     #=> "Jun  9 at 08:52 PM"
+time.stamp("23:59 UTC")             #=> "20:52 PST"
 ```
 
 ## Features
 
 * Abbreviated and full names of months and weekdays are recognized.
 * Days with or without a leading zero work instinctively.
+* Timezones are recognized. Note that stamp only looks for a few
+  common abbreviations, so when in doubt use "UTC".
 * Include any extraneous text you'd like, e.g. "DOB:".
 
 ### Disambiguation by value
@@ -96,7 +99,6 @@ Time.now.to_s(:military)  #=> "15:35"
 
 ### Limitations
 
-* Time zone support hasn't been implemented. Patches welcome!
 * DateTime should inherit stamp behavior from Date, but it hasn't been thoroughly tested. Patches welcome!
 
 ### Advanced Usage

@@ -4,6 +4,7 @@ module Stamp
     ABBR_MONTHNAMES_REGEXP = /^(#{Date::ABBR_MONTHNAMES.compact.join('|')})$/i
     DAYNAMES_REGEXP        = /^(#{Date::DAYNAMES.join('|')})$/i
     ABBR_DAYNAMES_REGEXP   = /^(#{Date::ABBR_DAYNAMES.join('|')})$/i
+    TIMEZONE_REGEXP        = /^(AST|CET|CST|EET|EST|GMT|JST|MSK|MST|PST|UTC|WST)$/i
 
     ONE_DIGIT_REGEXP       = /^\d{1}$/
     TWO_DIGIT_REGEXP       = /^\d{2}$/
@@ -147,6 +148,9 @@ module Stamp
 
       when ABBR_DAYNAMES_REGEXP
         '%a'
+
+      when TIMEZONE_REGEXP
+        '%Z'
 
       when FOUR_DIGIT_REGEXP
         '%Y'

@@ -82,6 +82,7 @@ Feature: Stamping a date
       | 08:59:59 AM | 01:31:27 PM |
       | 08:59:59 PM | 01:31:27 PM |
       | 23:59:59    | 13:31:27    |
+      | 8:59 pst    | 1:31 UTC    |
 
   @date
   @time
