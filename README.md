@@ -62,7 +62,7 @@ time.stamp("23:59 UTC")             #=> "20:52 PST"
 
 * Abbreviated and full names of months and weekdays are recognized.
 * Days with or without a leading zero work instinctively.
-* Rudimentary timezone support. Note that stamp only looks for a few
+* Timezones are recognized. Note that stamp only looks for a few
   common abbreviations, so when in doubt use "UTC".
 * Include any extraneous text you'd like, e.g. "DOB:".
 
