@@ -18,7 +18,7 @@ When /^I stamp the example "([^"]*)"$/ do |example|
 end
 
 Then /^I produce "([^"]*)"$/ do |expected|
-  assert_equal expected.strip, @stamped.strip
+  assert_match /^#{expected.strip}$/, @stamped.strip
 end
 
 When /^I call "([^"]*)" with "([^"]*)"$/ do |method, arg|
