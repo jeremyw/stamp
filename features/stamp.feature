@@ -72,17 +72,17 @@ Feature: Stamping a date
     Then I produce "<output>"
 
     Examples:
-      | example     | output         |
-      | 8:59 am     | 1:31 pm        |
-      | 8:59am      | 1:31pm         |
-      | 08:59 AM    | 01:31 PM       |
-      | 08:59 PM    | 01:31 PM       |
-      | 23:59       | 13:31          |
-      | 8:59:59 am  | 1:31:27 pm     |
-      | 08:59:59 AM | 01:31:27 PM    |
-      | 08:59:59 PM | 01:31:27 PM    |
-      | 23:59:59    | 13:31:27       |
-      | 8:59 PST    | 1:31 (UTC\|GMT) |
+      | example     | output      |
+      | 8:59 am     | 1:31 pm     |
+      | 8:59am      | 1:31pm      |
+      | 08:59 AM    | 01:31 PM    |
+      | 08:59 PM    | 01:31 PM    |
+      | 23:59       | 13:31       |
+      | 8:59:59 am  | 1:31:27 pm  |
+      | 08:59:59 AM | 01:31:27 PM |
+      | 08:59:59 PM | 01:31:27 PM |
+      | 23:59:59    | 13:31:27    |
+      | 8:59 PST    | 1:31 UTC    |
 
   @date
   @time
