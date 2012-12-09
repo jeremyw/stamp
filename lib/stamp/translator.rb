@@ -54,7 +54,7 @@ module Stamp
 
       # transform any date tokens to strftime directives
       words = Emitters::CompositeEmitter.new
-      words << emitters(before.split(/([0-9a-zA-Z]+|%[a-zA-Z])/)) do |token, previous_part|
+      words << emitters(before.split(/([0-9a-zA-Z]+|%\S*[a-zA-Z])/)) do |token, previous_part|
         date_emitter(token, previous_part)
       end
 

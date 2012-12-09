@@ -99,8 +99,8 @@ Feature: Stamping a date
 
   Scenario: strftime directives just get passed through
     Given the date December 21, 2012
-    When I stamp the example "John Cusack was in a movie about %b %d, %Y, but it wasn't very good."
-    Then I produce "John Cusack was in a movie about Dec 21, 2012, but it wasn't very good."
+    When I stamp the example "John Cusack was in a movie about %b (%-m) %e, %Y, but it wasn't very good."
+    Then I produce "John Cusack was in a movie about Dec (12) 21, 2012, but it wasn't very good."
 
   Scenario: Plain text just gets passed through
     Given the date June 1, 1926
