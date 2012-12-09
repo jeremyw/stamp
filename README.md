@@ -81,12 +81,12 @@ future understand your intent.
 ### Rails Integration
 
 Stamp makes it easy to configure your application's common date and time
-formats in a more self-documenting way with the `strftime_format` method:
+formats in a more self-documenting way with the `strftime_proc` method:
 
 ```ruby
 # config/initializers/time_formats.rb
-Date::DATE_FORMATS[:short]    = Stamp.strftime_format("Mon Jan 1")
-Time::DATE_FORMATS[:military] = Stamp.strftime_format("23:59")
+Date::DATE_FORMATS[:short]    = Stamp.strftime_proc("Mon Jan 1")
+Time::DATE_FORMATS[:military] = Stamp.strftime_proc("23:59")
 ```
 
 To use your formats:

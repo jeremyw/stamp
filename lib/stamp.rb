@@ -20,6 +20,16 @@ module Stamp
     Stamp::StrftimeTranslator.new(target).translate(example)
   end
 
+  # Transforms the given example dates/time format to a proc that
+  # will render the date. This is suitable for rails initializers
+  #
+  # @example
+  #   Date::DATE_FORMATS[:short]    = Stamp.strftime_proc("Mon Jan 1")
+
+  def self.strftime_proc(example,target=nil)
+    format=Stamp::StrftimeTranslator.new(target).translate(example)
+    Proc.new { |date| date.strftime(format) }
+  end
   # Formats a date/time using a human-friendly example as a template.
   #
   # @param  [String] example a human-friendly date/time example
@@ -28,7 +38,7 @@ module Stamp
   # @example
   #   Date.new(2012, 12, 21).stamp("Jan 1, 1999") #=> "Dec 21, 2012"
   def stamp(example)
-    strftime(strftime_format(example))
+    Stamp.strftime_proc(example, self).call(self)
   end
   alias :stamp_like  :stamp
   alias :format_like :stamp
