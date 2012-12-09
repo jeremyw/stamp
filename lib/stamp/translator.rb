@@ -25,57 +25,44 @@ module Stamp
     OBVIOUS_DAYS           = 13..31
     OBVIOUS_24_HOUR        = 13..23
 
+    TWO_DIGIT_YEAR_EMITTER  = Emitters::NumericEmitter.new(:year, :leading_zero => true, :modifier => lambda { |year| year % 100 })
+    TWO_DIGIT_MONTH_EMITTER = Emitters::NumericEmitter.new(:month, :leading_zero => true)
+    TWO_DIGIT_DAY_EMITTER   = Emitters::NumericEmitter.new(:day, :leading_zero => true)
+    HOUR_TO_12_HOUR         = lambda { |h| h = h % 12; h == 0 ? 12 : h }
+
     OBVIOUS_DATE_MAP = {
-      OBVIOUS_YEARS  => NumericEmitter.new(:year, 100, "2.2"), # '%y'
-      OBVIOUS_MONTHS => NumericEmitter.new(:month, nil, "2.2"), # '%m'
-      OBVIOUS_DAYS   => NumericEmitter.new(:day, nil, "2.2") # '%d'
+      OBVIOUS_YEARS  => TWO_DIGIT_YEAR_EMITTER,
+      OBVIOUS_MONTHS => TWO_DIGIT_MONTH_EMITTER,
+      OBVIOUS_DAYS   => TWO_DIGIT_DAY_EMITTER
     }
 
     TWO_DIGIT_DATE_SUCCESSION = {
-      :month => NumericEmitter.new(:day, nil, "2.2"), # '%d'
-      :day   => NumericEmitter.new(:year, 100, "2.2"), # '%y'
-      :year  => NumericEmitter.new(:month, nil, "2.2") # '%m'
+      :month => TWO_DIGIT_DAY_EMITTER,
+      :day   => TWO_DIGIT_YEAR_EMITTER,
+      :year  => TWO_DIGIT_MONTH_EMITTER
     }
 
     TWO_DIGIT_TIME_SUCCESSION = {
-      :hour   => NumericEmitter.new(:min, nil, "2.2"), # '%M'
-      :min => NumericEmitter.new(:sec, nil, "2.2")  # '%S'
+      :hour => Emitters::NumericEmitter.new(:min, :leading_zero => true),
+      :min  => Emitters::NumericEmitter.new(:sec, :leading_zero => true)
     }
 
-    # supporting basic ones, not sure how extensive to make this
-    LEGACY = {
-      '%A' => LookupEmitter.new(:wday, Date::DAYNAMES),
-      '%B' => LookupEmitter.new(:month, Date::MONTHNAMES),
-      '%H' => NumericEmitter.new(:hour, nil, '2'),
-      '%I' => NumericEmitter.new(:hour, 12, '2.2', true),
-      '%M' => NumericEmitter.new(:min, nil, "2.2"),
-      '%S' => NumericEmitter.new(:sec, nil, "2.2"),
-      '%Y' => NumericEmitter.new(:year),
-      '%Z' => LookupEmitter.new(:zone),
-      '%a' => LookupEmitter.new(:wday, Date::ABBR_DAYNAMES),
-      '%b' => LookupEmitter.new(:month, Date::ABBR_MONTHNAMES),
-      '%d' => NumericEmitter.new(:day, nil, "2.2"),
-      '%e' => NumericEmitter.new(:day,nil,"2"),
-      '%l' => NumericEmitter.new(:hour, 12, '2', true),
-      '%m' => NumericEmitter.new(:month, nil, "2.2"),
-      '%y' => NumericEmitter.new(:year, 100, "2.2")
-    }
 
     def translate(example)
       # extract any substrings that look like times, like "23:59" or "8:37 am"
       before, time_example, after = example.partition(TIME_REGEXP)
 
       # transform any date tokens to strftime directives
-      words = CompositeEmitter.new
-      words << strftime_directives(before.split(/([0-9a-zA-Z]+|%[a-zA-Z])/)) do |token, previous_part|
-        strftime_date_directive(token, previous_part)
+      words = Emitters::CompositeEmitter.new
+      words << emitters(before.split(/([0-9a-zA-Z]+|%[a-zA-Z])/)) do |token, previous_part|
+        date_emitter(token, previous_part)
       end
 
       # transform the example time string to strftime directives
       unless time_example.empty?
         time_parts = time_example.scan(TIME_REGEXP).first
-        words << strftime_directives(time_parts) do |token, previous_part|
-          strftime_time_directive(token, previous_part)
+        words << emitters(time_parts) do |token, previous_part|
+          time_emitter(token, previous_part)
         end
       end
 
@@ -84,58 +71,68 @@ module Stamp
       words
     end
 
-    # Transforms tokens that look like date/time parts to strftime directives.
-    def strftime_directives(tokens)
+    # Transforms tokens that look like date/time parts to emitter objects.
+    def emitters(tokens)
       previous_part = nil
       tokens.map do |token|
-        directive = yield(token, previous_part)
-        previous_part = directive.field unless directive.nil?
-        directive || (token =~ /^%/ ? LEGACY[token] : StringEmitter.new(token||''))
+        if token =~ /^%/
+          emitter = Emitters::StrftimeEmitter.new(token)
+        else
+          emitter = yield(token, previous_part)
+          previous_part = emitter.field unless emitter.nil?
+        end
+
+        emitter || Emitters::StringEmitter.new(token)
       end
     end
 
-    def strftime_time_directive(token, previous_part)
+    def time_emitter(token, previous_part)
       case token
       when MERIDIAN_LOWER_REGEXP
-        AmPmEmitter.new() # '%P'
+        Emitters::AmPmEmitter.new
+
       when MERIDIAN_UPPER_REGEXP
-        AmPmEmitter.new(:upcase) # '%p'
+        Emitters::AmPmEmitter.new(:modifier => lambda { |v| v.upcase })
+
       when TWO_DIGIT_REGEXP
         TWO_DIGIT_TIME_SUCCESSION[previous_part] ||
           case token.to_i
           when OBVIOUS_24_HOUR
-            NumericEmitter.new(:hour, nil, '2') # '%H' # 24-hour clock
+            # 24-hour clock
+            Emitters::NumericEmitter.new(:hour, :leading_zero => true)
           else
-            NumericEmitter.new(:hour, 12, '2.2', true) #%I' # 12-hour clock with leading zero
+            # 12-hour clock with leading zero
+            Emitters::NumericEmitter.new(:hour, :leading_zero => true, :modifier => HOUR_TO_12_HOUR)
           end
 
       when ONE_DIGIT_REGEXP
-        NumericEmitter.new(:hour, 12, '2', true) # '%l' # hour without leading zero (but leading space)
+        # 12-hour clock without leading zero
+        Emitters::NumericEmitter.new(:hour, :modifier => HOUR_TO_12_HOUR)
       end
     end
 
-    def strftime_date_directive(token, previous_part)
+    def date_emitter(token, previous_part)
       case token
       when MONTHNAMES_REGEXP
-        LookupEmitter.new(:month, Date::MONTHNAMES) #'%B'
+        Emitters::LookupEmitter.new(:month, Date::MONTHNAMES)
 
       when ABBR_MONTHNAMES_REGEXP
-        LookupEmitter.new(:month, Date::ABBR_MONTHNAMES) #'%b'
+        Emitters::LookupEmitter.new(:month, Date::ABBR_MONTHNAMES)
 
       when DAYNAMES_REGEXP
-        LookupEmitter.new(:wday, Date::DAYNAMES) #'%A'
+        Emitters::LookupEmitter.new(:wday, Date::DAYNAMES)
 
       when ABBR_DAYNAMES_REGEXP
-        LookupEmitter.new(:wday, Date::ABBR_DAYNAMES) #'%a'
+        Emitters::LookupEmitter.new(:wday, Date::ABBR_DAYNAMES)
 
       when TIMEZONE_REGEXP
-        LookupEmitter.new(:zone) #'%Z'
+        Emitters::DelegateEmitter.new(:zone)
 
       when FOUR_DIGIT_REGEXP
-        NumericEmitter.new(:year) #'%Y'
+        Emitters::NumericEmitter.new(:year)
 
       when ORDINAL_DAY_REGEXP
-        OrdinalEmitter.new(:day)
+        Emitters::OrdinalEmitter.new(:day)
 
       when TWO_DIGIT_REGEXP
         value = token.to_i
@@ -151,10 +148,10 @@ module Stamp
         # disambiguate based on context
         obvious_directive ||
           TWO_DIGIT_DATE_SUCCESSION[previous_part] ||
-          NumericEmitter.new(:month, 100, "2.2") # '%m'
+          TWO_DIGIT_MONTH_EMITTER
 
       when ONE_DIGIT_REGEXP
-        NumericEmitter.new(:day,nil,"2") #'%e' # day without leading zero
+        Emitters::NumericEmitter.new(:day)
       end
     end
 

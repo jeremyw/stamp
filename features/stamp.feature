@@ -14,15 +14,15 @@ Feature: Stamping a date
       | example                  | output                       |
       | January                  | September                    |
       | Jan                      | Sep                          |
-      | Jan 1                    | Sep  8                       |
+      | Jan 1                    | Sep 8                        |
       | Jan 01                   | Sep 08                       |
       | Jan 10                   | Sep 08                       |
-      | Jan 1, 1999              | Sep  8, 2011                 |
+      | Jan 1, 1999              | Sep 8, 2011                  |
       | Jan 12, 1999             | Sep 08, 2011                 |
       | 13 January 1999          | 08 September 2011            |
       | Monday                   | Thursday                     |
-      | Tue, Jan 1               | Thu, Sep  8                  |
-      | Tuesday, January 1, 1999 | Thursday, September  8, 2011 |
+      | Tue, Jan 1               | Thu, Sep 8                   |
+      | Tuesday, January 1, 1999 | Thursday, September 8, 2011  |
       | 01/1999                  | 09/2011                      |
       | 01/01                    | 09/08                        |
       | 01/31                    | 09/08                        |
@@ -93,9 +93,9 @@ Feature: Stamping a date
 
     Examples:
       | example                         | output                            |
-      | Jan 1, 1999 8:59 am             | Sep  8, 2011  1:31 pm             |
+      | Jan 1, 1999 8:59 am             | Sep 8, 2011 1:31 pm               |
       | 08:59 AM 1999-12-31             | 01:31 PM 2011-09-08               |
-      | Date: Jan 1, 1999 Time: 8:59 am | Date: Sep  8, 2011 Time:  1:31 pm |
+      | Date: Jan 1, 1999 Time: 8:59 am | Date: Sep 8, 2011 Time: 1:31 pm   |
 
   Scenario: strftime directives just get passed through
     Given the date December 21, 2012
@@ -104,8 +104,8 @@ Feature: Stamping a date
 
   Scenario: Plain text just gets passed through
     Given the date June 1, 1926
-    When I stamp the example "Marilyn Monroe was born on January 1, 1999."
-    Then I produce "Marilyn Monroe was born on June  1, 1926."
+    When I stamp the example "Marilyn Monroe was born on January 9, 1999."
+    Then I produce "Marilyn Monroe was born on June 1, 1926."
 
   Scenario Outline: Aliases for the stamp method
     Given the date December 9, 2011
