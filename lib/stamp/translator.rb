@@ -42,6 +42,24 @@ module Stamp
       :min => NumericEmitter.new(:sec, nil, "2.2")  # '%S'
     }
 
+    # supporting basic ones, not sure how extensive to make this
+    LEGACY = {
+      '%A' => LookupEmitter.new(:wday, Date::DAYNAMES),
+      '%B' => LookupEmitter.new(:month, Date::MONTHNAMES),
+      '%H' => NumericEmitter.new(:hour, nil, '2'),
+      '%I' => NumericEmitter.new(:hour, 12, '2.2', true),
+      '%M' => NumericEmitter.new(:min, nil, "2.2"),
+      '%S' => NumericEmitter.new(:sec, nil, "2.2"),
+      '%Y' => NumericEmitter.new(:year),
+      '%Z' => LookupEmitter.new(:zone),
+      '%a' => LookupEmitter.new(:wday, Date::ABBR_DAYNAMES),
+      '%b' => LookupEmitter.new(:month, Date::ABBR_MONTHNAMES),
+      '%d' => NumericEmitter.new(:day, nil, "2.2"),
+      '%e' => NumericEmitter.new(:day,nil,"2"),
+      '%l' => NumericEmitter.new(:hour, 12, '2', true),
+      '%m' => NumericEmitter.new(:month, nil, "2.2"),
+      '%y' => NumericEmitter.new(:year, 100, "2.2")
+    }
 
     def translate(example)
       # extract any substrings that look like times, like "23:59" or "8:37 am"
@@ -49,7 +67,7 @@ module Stamp
 
       # transform any date tokens to strftime directives
       words = CompositeEmitter.new
-      words << strftime_directives(before.split(/\b/)) do |token, previous_part|
+      words << strftime_directives(before.split(/([0-9a-zA-Z]+|%[a-zA-Z])/)) do |token, previous_part|
         strftime_date_directive(token, previous_part)
       end
 
@@ -72,7 +90,7 @@ module Stamp
       tokens.map do |token|
         directive = yield(token, previous_part)
         previous_part = directive.field unless directive.nil?
-        directive || StringEmitter.new(token||'') #NOTE: add legacy support here
+        directive || (token =~ /^%/ ? LEGACY[token] : StringEmitter.new(token||''))
       end
     end
 
