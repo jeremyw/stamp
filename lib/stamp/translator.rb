@@ -75,7 +75,7 @@ module Stamp
       previous_part = nil
       tokens.map do |token|
         if token =~ /^%/
-          emitter = Emitters::StrftimeEmitter.new(token)
+          emitter = Emitters::StrftimeEmitter.create(token)
         else
           emitter = yield(token, previous_part)
           previous_part = emitter.field unless emitter.nil?
