@@ -24,10 +24,6 @@ module Stamp
           end
         end
       end
-
-      def blank?
-        false
-      end
     end
   end
 end

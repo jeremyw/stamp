@@ -22,6 +22,10 @@ module Stamp
           @lookup[value]
         end
       end
+
+      def regexp
+        /^(#{@lookup.join('|')})$/i
+      end
     end
   end
 end

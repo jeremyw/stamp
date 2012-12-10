@@ -1,6 +1,7 @@
 require "date"
 require "time"
 
+require "stamp/emitters/simple"
 require "stamp/emitters/am_pm_emitter"
 require "stamp/emitters/composite_emitter"
 require "stamp/emitters/delegate_emitter"

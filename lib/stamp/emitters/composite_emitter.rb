@@ -16,8 +16,6 @@ module Stamp
       def <<(emitter)
         if emitter.is_a?(Enumerable)
           emitter.each { |e| self << e }
-        # elsif !emitter.is_a?(Emitter)
-        #   raise "not an emitter: #{emitter.nil? ? "nil" : emitter}"
         elsif @emitters.last.is_a?(StringEmitter) && emitter.is_a?(StringEmitter)
           @emitters.last << emitter
         else

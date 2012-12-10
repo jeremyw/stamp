@@ -25,10 +25,10 @@ module Stamp
     OBVIOUS_DAYS           = 13..31
     OBVIOUS_24_HOUR        = 13..23
 
-    TWO_DIGIT_YEAR_EMITTER  = Emitters::NumericEmitter.new(:year, :leading_zero => true, :modifier => lambda { |year| year % 100 })
+    TWO_DIGIT_YEAR_EMITTER  = Emitters::NumericEmitter.new(:year, :leading_zero => true) { |year| year % 100 }
     TWO_DIGIT_MONTH_EMITTER = Emitters::NumericEmitter.new(:month, :leading_zero => true)
     TWO_DIGIT_DAY_EMITTER   = Emitters::NumericEmitter.new(:day, :leading_zero => true)
-    HOUR_TO_12_HOUR         = lambda { |h| h = h % 12; h == 0 ? 12 : h }
+    HOUR_TO_12_HOUR         = lambda { |h| (h-1) % 12 + 1 }
 
     OBVIOUS_DATE_MAP = {
       OBVIOUS_YEARS  => TWO_DIGIT_YEAR_EMITTER,
@@ -46,7 +46,6 @@ module Stamp
       :hour => Emitters::NumericEmitter.new(:min, :leading_zero => true),
       :min  => Emitters::NumericEmitter.new(:sec, :leading_zero => true)
     }
-
 
     def translate(example)
       # extract any substrings that look like times, like "23:59" or "8:37 am"
@@ -154,6 +153,5 @@ module Stamp
         Emitters::NumericEmitter.new(:day)
       end
     end
-
   end
 end
