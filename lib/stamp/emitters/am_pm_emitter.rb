@@ -1,8 +1,10 @@
 module Stamp
   module Emitters
     class AmPmEmitter
-      def initialize(options={})
+      IDENTITY = lambda {|p| p }
+      def initialize(options={}, &block)
         @options = options
+        @modifier = block || IDENTITY
       end
 
       def field
@@ -10,9 +12,7 @@ module Stamp
       end
 
       def format(target)
-        value = lookup(target.send(:hour))
-        value = @options[:modifier].call(value) if @options[:modifier]
-        value
+        @modifier.call(lookup(target.send(:hour)))
       end
 
       def lookup(hour)

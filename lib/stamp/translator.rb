@@ -25,9 +25,9 @@ module Stamp
     OBVIOUS_DAYS           = 13..31
     OBVIOUS_24_HOUR        = 13..23
 
-    TWO_DIGIT_YEAR_EMITTER  = Emitters::NumericEmitter.new(:year, :leading_zero => true) { |year| year % 100 }
+    TWO_DIGIT_YEAR_EMITTER  = Emitters::NumericEmitter.new(:year,  :leading_zero => true) { |year| year % 100 }
     TWO_DIGIT_MONTH_EMITTER = Emitters::NumericEmitter.new(:month, :leading_zero => true)
-    TWO_DIGIT_DAY_EMITTER   = Emitters::NumericEmitter.new(:day, :leading_zero => true)
+    TWO_DIGIT_DAY_EMITTER   = Emitters::NumericEmitter.new(:day,   :leading_zero => true)
     HOUR_TO_12_HOUR         = lambda { |h| (h-1) % 12 + 1 }
 
     OBVIOUS_DATE_MAP = {
@@ -91,7 +91,7 @@ module Stamp
         Emitters::AmPmEmitter.new
 
       when MERIDIAN_UPPER_REGEXP
-        Emitters::AmPmEmitter.new(:modifier => lambda { |v| v.upcase })
+        Emitters::AmPmEmitter.new { |v| v.upcase }
 
       when TWO_DIGIT_REGEXP
         TWO_DIGIT_TIME_SUCCESSION[previous_part] ||
@@ -101,12 +101,12 @@ module Stamp
             Emitters::NumericEmitter.new(:hour, :leading_zero => true)
           else
             # 12-hour clock with leading zero
-            Emitters::NumericEmitter.new(:hour, :leading_zero => true, :modifier => HOUR_TO_12_HOUR)
+            Emitters::NumericEmitter.new(:hour, :leading_zero => true, &HOUR_TO_12_HOUR)
           end
 
       when ONE_DIGIT_REGEXP
         # 12-hour clock without leading zero
-        Emitters::NumericEmitter.new(:hour, :modifier => HOUR_TO_12_HOUR)
+        Emitters::NumericEmitter.new(:hour, &HOUR_TO_12_HOUR)
       end
     end
 
@@ -119,10 +119,10 @@ module Stamp
         Emitters::LookupEmitter.new(:month, Date::ABBR_MONTHNAMES)
 
       when DAYNAMES_REGEXP
-        Emitters::LookupEmitter.new(:wday, Date::DAYNAMES)
+        Emitters::LookupEmitter.new(:wday,  Date::DAYNAMES)
 
       when ABBR_DAYNAMES_REGEXP
-        Emitters::LookupEmitter.new(:wday, Date::ABBR_DAYNAMES)
+        Emitters::LookupEmitter.new(:wday,  Date::ABBR_DAYNAMES)
 
       when TIMEZONE_REGEXP
         Emitters::DelegateEmitter.new(:zone)
