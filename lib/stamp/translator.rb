@@ -25,146 +25,119 @@ module Stamp
     OBVIOUS_DAYS           = 13..31
     OBVIOUS_24_HOUR        = 13..23
 
+    TWO_DIGIT_YEAR_EMITTER  = Emitters::NumericEmitter.new(:year,  :leading_zero => true) { |year| year % 100 }
+    TWO_DIGIT_MONTH_EMITTER = Emitters::NumericEmitter.new(:month, :leading_zero => true)
+    TWO_DIGIT_DAY_EMITTER   = Emitters::NumericEmitter.new(:day,   :leading_zero => true)
+    HOUR_TO_12_HOUR         = lambda { |h| (h-1) % 12 + 1 }
+
     OBVIOUS_DATE_MAP = {
-      OBVIOUS_YEARS  => '%y',
-      OBVIOUS_MONTHS => '%m',
-      OBVIOUS_DAYS   => '%d'
+      OBVIOUS_YEARS  => TWO_DIGIT_YEAR_EMITTER,
+      OBVIOUS_MONTHS => TWO_DIGIT_MONTH_EMITTER,
+      OBVIOUS_DAYS   => TWO_DIGIT_DAY_EMITTER
     }
 
     TWO_DIGIT_DATE_SUCCESSION = {
-      :month => '%d',
-      :day   => '%y',
-      :year  => '%m'
+      :month => TWO_DIGIT_DAY_EMITTER,
+      :day   => TWO_DIGIT_YEAR_EMITTER,
+      :year  => TWO_DIGIT_MONTH_EMITTER
     }
 
     TWO_DIGIT_TIME_SUCCESSION = {
-      :hour   => '%M',
-      :minute => '%S'
+      :hour => Emitters::NumericEmitter.new(:min, :leading_zero => true),
+      :min  => Emitters::NumericEmitter.new(:sec, :leading_zero => true)
     }
-
-    def initialize(target_date_or_time)
-      @target = target_date_or_time
-    end
-
-    # Cribbed from ActiveSupport to format ordinal days (1st, 2nd, 23rd etc).
-    def ordinalize(number)
-      if (11..13).include?(number.to_i % 100)
-        "#{number}th"
-      else
-        case number.to_i % 10
-        when 1; "#{number}st"
-        when 2; "#{number}nd"
-        when 3; "#{number}rd"
-        else    "#{number}th"
-        end
-      end
-    end
 
     def translate(example)
       # extract any substrings that look like times, like "23:59" or "8:37 am"
       before, time_example, after = example.partition(TIME_REGEXP)
 
       # transform any date tokens to strftime directives
-      words = strftime_directives(before.split(/\b/)) do |token, previous_part|
-        strftime_date_directive(token, previous_part)
+      words = Emitters::CompositeEmitter.new
+      words << emitters(before.split(/([0-9a-zA-Z]+|%\S*[a-zA-Z])/)) do |token, previous_part|
+        date_emitter(token, previous_part)
       end
 
       # transform the example time string to strftime directives
       unless time_example.empty?
         time_parts = time_example.scan(TIME_REGEXP).first
-        words += strftime_directives(time_parts) do |token, previous_part|
-          strftime_time_directive(token, previous_part)
+        words << emitters(time_parts) do |token, previous_part|
+          time_emitter(token, previous_part)
         end
       end
 
       # recursively process any remaining text
       words << translate(after) unless after.empty?
-      words.join
+      words
     end
 
-    # Returns symbolic date part for given strftime directive.
-    def date_part(strftime_directive)
-      case strftime_directive
-      when '%b', '%B', '%m'
-        :month
-      when '%d', '%e'
-        :day
-      when '%y', '%Y'
-        :year
-      when '%H', '%I', '%l'
-        :hour
-      when '%M'
-        :minute
-      when '%S'
-        :second
-      end
-    end
-
-    # Transforms tokens that look like date/time parts to strftime directives.
-    def strftime_directives(tokens)
+    # Transforms tokens that look like date/time parts to emitter objects.
+    def emitters(tokens)
       previous_part = nil
       tokens.map do |token|
-        directive = yield(token, previous_part)
-        previous_part = date_part(directive) unless directive.nil?
-        directive || token
+        if token =~ /^%/
+          emitter = Emitters::StrftimeEmitter.create(token)
+        else
+          emitter = yield(token, previous_part)
+          previous_part = emitter.field unless emitter.nil?
+        end
+
+        emitter || Emitters::StringEmitter.new(token)
       end
     end
 
-    def strftime_time_directive(token, previous_part)
+    def time_emitter(token, previous_part)
       case token
       when MERIDIAN_LOWER_REGEXP
-        if RUBY_VERSION =~ /^1.8/ && @target.is_a?(Time)
-          # 1.8.7 doesn't implement %P
-          @target.strftime("%p").downcase
-        else
-          '%P'
-        end
+        Emitters::AmPmEmitter.new
 
       when MERIDIAN_UPPER_REGEXP
-        '%p'
+        Emitters::AmPmEmitter.new { |v| v.upcase }
 
       when TWO_DIGIT_REGEXP
         TWO_DIGIT_TIME_SUCCESSION[previous_part] ||
           case token.to_i
           when OBVIOUS_24_HOUR
-            '%H' # 24-hour clock
+            # 24-hour clock
+            Emitters::NumericEmitter.new(:hour, :leading_zero => true)
           else
-            '%I' # 12-hour clock with leading zero
+            # 12-hour clock with leading zero
+            Emitters::NumericEmitter.new(:hour, :leading_zero => true, &HOUR_TO_12_HOUR)
           end
 
       when ONE_DIGIT_REGEXP
-        '%l' # hour without leading zero
+        # 12-hour clock without leading zero
+        Emitters::NumericEmitter.new(:hour, &HOUR_TO_12_HOUR)
       end
     end
 
-    def strftime_date_directive(token, previous_part)
+    def date_emitter(token, previous_part)
       case token
       when MONTHNAMES_REGEXP
-        '%B'
+        Emitters::LookupEmitter.new(:month, Date::MONTHNAMES)
 
       when ABBR_MONTHNAMES_REGEXP
-        '%b'
+        Emitters::LookupEmitter.new(:month, Date::ABBR_MONTHNAMES)
 
       when DAYNAMES_REGEXP
-        '%A'
+        Emitters::LookupEmitter.new(:wday,  Date::DAYNAMES)
 
       when ABBR_DAYNAMES_REGEXP
-        '%a'
+        Emitters::LookupEmitter.new(:wday,  Date::ABBR_DAYNAMES)
 
       when TIMEZONE_REGEXP
-        '%Z'
+        Emitters::DelegateEmitter.new(:zone)
 
       when FOUR_DIGIT_REGEXP
-        '%Y'
+        Emitters::NumericEmitter.new(:year)
 
       when ORDINAL_DAY_REGEXP
-        ordinalize(@target.day)
+        Emitters::OrdinalEmitter.new(:day)
 
       when TWO_DIGIT_REGEXP
         value = token.to_i
 
         obvious_mappings =
-          OBVIOUS_DATE_MAP.reject { |k,v| date_part(v) == previous_part }
+          OBVIOUS_DATE_MAP.reject { |k,v| v.field == previous_part }
 
         obvious_directive = obvious_mappings.find do |range, directive|
           break directive if range === value
@@ -174,12 +147,11 @@ module Stamp
         # disambiguate based on context
         obvious_directive ||
           TWO_DIGIT_DATE_SUCCESSION[previous_part] ||
-          '%m'
+          TWO_DIGIT_MONTH_EMITTER
 
       when ONE_DIGIT_REGEXP
-        '%e' # day without leading zero
+        Emitters::NumericEmitter.new(:day)
       end
     end
-
   end
 end
