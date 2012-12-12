@@ -67,7 +67,8 @@ Feature: Stamping a date
 
   @time
   Scenario Outline: Formatting times by example
-    Given the time September 8, 2011 at 13:31:27
+    Given the time zone is "EST"
+      And the time February 8, 2011 at 13:31:27
     When I stamp the example "<example>"
     Then I produce "<output>"
 
@@ -82,7 +83,7 @@ Feature: Stamping a date
       | 08:59:59 AM | 01:31:27 PM |
       | 08:59:59 PM | 01:31:27 PM |
       | 23:59:59    | 13:31:27    |
-      | 8:59 PST    | 1:31 UTC    |
+      | 8:59 PST    | 1:31 EST    |
 
   @date
   @time
