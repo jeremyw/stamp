@@ -41,7 +41,6 @@ module Stamp
     TWO_DIGIT_YEAR_EMITTER  = Emitters::TwoDigit.new(:year) { |year| year % 100 }
     TWO_DIGIT_MONTH_EMITTER = Emitters::TwoDigit.new(:month)
     TWO_DIGIT_DAY_EMITTER   = Emitters::TwoDigit.new(:day)
-    HOUR_TO_12_HOUR         = lambda { |h| ((h - 1) % 12) + 1 }
 
     def translate(example)
       # extract any substrings that look like times, like "23:59" or "8:37 am"
@@ -89,7 +88,7 @@ module Stamp
 
       when ONE_DIGIT_REGEXP
         # 12-hour clock without leading zero
-        Emitters::Delegate.new(:hour, &HOUR_TO_12_HOUR)
+        Emitters::TwelveHour::NON_LEADING_ZERO
       end
     end
 
@@ -100,7 +99,7 @@ module Stamp
         Emitters::TwoDigit.new(:hour)
       else
         # 12-hour clock with leading zero
-        Emitters::TwoDigit.new(:hour, &HOUR_TO_12_HOUR)
+        Emitters::TwelveHour::LEADING_ZERO
       end
     end
 
