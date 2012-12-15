@@ -7,12 +7,9 @@ module Stamp
         @emitters = []
       end
 
-      def format(target)
-        # NOTE using #each to build string because benchmarking shows
-        # that it's ~20% faster than .map.join('')
-        result = ''
-        @emitters.each { |e| result << e.format(target).to_s }
-        result
+      def format(out, target)
+        @emitters.each { |e| e.format(out, target) }
+        out
       end
 
       def <<(emitter)

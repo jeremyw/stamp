@@ -7,8 +7,8 @@ module Stamp
         @value = value
       end
 
-      def format(target)
-        value
+      def format(out, target)
+        out << value.to_s
       end
 
       def <<(emitter)

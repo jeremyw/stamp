@@ -11,8 +11,8 @@ module Stamp
         @modifier = block
       end
 
-      def format(target)
-        modify(target.send(field))
+      def format(out, target)
+        out << modify(target.send(field).to_s)
       end
     end
   end

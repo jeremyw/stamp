@@ -10,8 +10,8 @@ module Stamp
         @modifier = block
       end
 
-      def format(target)
-        modify(target.hour < 12 ? AM : PM)
+      def format(out, target)
+        out << modify(target.hour < 12 ? AM : PM)
       end
 
       def field

@@ -8,8 +8,8 @@ module Stamp
         @field = field
       end
 
-      def format(target)
-        target.send(field)
+      def format(out, target)
+        out << target.send(field)
       end
     end
   end
