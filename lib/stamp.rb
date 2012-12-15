@@ -28,7 +28,7 @@ module Stamp
   # @example
   #   Date.new(2012, 12, 21).stamp("Jan 1, 1999") #=> "Dec 21, 2012"
   def stamp(example)
-    memoize_stamp_emitters(example).format(self)
+    memoize_stamp_emitters(example).format('', self)
   end
   alias :stamp_like  :stamp
   alias :format_like :stamp

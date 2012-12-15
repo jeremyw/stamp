@@ -8,8 +8,8 @@ module Stamp
         @field = field
       end
 
-      def format(target)
-        ordinalize(target.send(field))
+      def format(out, target)
+        out << ordinalize(target.send(field))
       end
 
       # Cribbed from ActiveSupport::Inflector

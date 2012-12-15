@@ -11,8 +11,8 @@ module Stamp
         @lookup = lookup
       end
 
-      def format(target)
-        lookup(target.send(field))
+      def format(out, target)
+        out << lookup(target.send(field))
       end
 
       def lookup(value)

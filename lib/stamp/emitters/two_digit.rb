@@ -13,9 +13,9 @@ module Stamp
         @modifier = block
       end
 
-      def format(target)
+      def format(out, target)
         value = modify(target.send(field))
-        value < 10 ? '0' + value.to_s : value.to_s
+        out << (value < 10 ? '0' : '') << value.to_s
       end
     end
   end
