@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name        = "stamp"
   s.version     = Stamp::VERSION
   s.authors     = ["Jeremy Weiskotten"]
-  s.email       = ["jeremy@weiskotten.com"]
+  s.email       = ["jeremy@terriblelabs.com"]
   s.homepage    = "https://github.com/jeremyw/stamp"
   s.summary     = %Q{Date and time formatting for humans.}
   s.description = %Q{Format dates and times based on human-friendly examples, not arcane strftime directives.}
