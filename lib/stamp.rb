@@ -13,10 +13,6 @@ require "stamp/translator"
 require "stamp/version"
 
 module Stamp
-  # Limits the number of formats that we memoize to prevent unbounded
-  # memory consumption.
-  MEMOIZATION_CAP = 999
-
   # Formats a date/time using a human-friendly example as a template.
   #
   # @param [String] example a human-friendly date/time example
@@ -37,7 +33,6 @@ module Stamp
   # order to improve performance.
   def memoize_stamp_emitters(example)
     @@memoized_stamp_emitters ||= {}
-    @@memoized_stamp_emitters.clear if @@memoized_stamp_emitters.size > MEMOIZATION_CAP
     @@memoized_stamp_emitters[example] ||= stamp_emitters(example)
   end
 
