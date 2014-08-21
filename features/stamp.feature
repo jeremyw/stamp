@@ -117,15 +117,3 @@ Feature: Stamping a date
       | alias       |
       | stamp_like  |
       | format_like |
-
-  @wip
-  Scenario Outline: Examples that aren't supported yet
-    Given the time September 8, 2011 at 13:31:27
-    When I stamp the example "<example>"
-    Then I produce "<output>"
-
-    Examples:
-      | example | output |
-      | 8 am    | 1 pm   |
-      | 8am     | 1pm    |
-      | 8AM     | 1PM    |
