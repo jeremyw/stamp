@@ -3,12 +3,14 @@ require "time"
 
 require "stamp/emitters/modifiable"
 require "stamp/emitters/am_pm"
+require "stamp/emitters/ambiguous"
 require "stamp/emitters/composite"
 require "stamp/emitters/delegate"
 require "stamp/emitters/lookup"
 require "stamp/emitters/ordinal"
 require "stamp/emitters/string"
 require "stamp/emitters/two_digit"
+require "stamp/disambiguator"
 require "stamp/translator"
 require "stamp/version"
 
@@ -29,6 +31,8 @@ module Stamp
   alias :stamp_like  :stamp
   alias :format_like :stamp
 
+  private
+
   # Memoizes the set of emitter objects for the given +example+ in
   # order to improve performance.
   def memoize_stamp_emitters(example)
@@ -37,7 +41,8 @@ module Stamp
   end
 
   def stamp_emitters(example)
-    Translator.new.translate(example)
+    emitters = Translator.new.translate(example)
+    Disambiguator.new(emitters).disambiguate!
   end
 end
 

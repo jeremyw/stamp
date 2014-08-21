@@ -34,32 +34,14 @@ module Stamp
     ORDINAL_DAY_REGEXP     = /^(\d{1,2})(st|nd|rd|th)$/
 
     # Disambiguate based on value
-    OBVIOUS_YEARS          = 60..99
-    OBVIOUS_MONTHS         = 12
-    OBVIOUS_DAYS           = 13..31
     OBVIOUS_24_HOUR        = 13..23
+    OBVIOUS_DAY            = 13..31
+    OBVIOUS_YEAR           = 32..99
 
     TWO_DIGIT_YEAR_EMITTER  = Emitters::TwoDigit.new(:year) { |year| year % 100 }
     TWO_DIGIT_MONTH_EMITTER = Emitters::TwoDigit.new(:month)
     TWO_DIGIT_DAY_EMITTER   = Emitters::TwoDigit.new(:day)
     HOUR_TO_12_HOUR         = lambda { |h| ((h - 1) % 12) + 1 }
-
-    OBVIOUS_DATE_MAP = {
-      OBVIOUS_YEARS  => TWO_DIGIT_YEAR_EMITTER,
-      OBVIOUS_MONTHS => TWO_DIGIT_MONTH_EMITTER,
-      OBVIOUS_DAYS   => TWO_DIGIT_DAY_EMITTER
-    }
-
-    TWO_DIGIT_DATE_SUCCESSION = {
-      :month => TWO_DIGIT_DAY_EMITTER,
-      :day   => TWO_DIGIT_YEAR_EMITTER,
-      :year  => TWO_DIGIT_MONTH_EMITTER
-    }
-
-    TWO_DIGIT_TIME_SUCCESSION = {
-      :hour => Emitters::TwoDigit.new(:min),
-      :min  => Emitters::TwoDigit.new(:sec)
-    }
 
     def translate(example)
       # extract any substrings that look like times, like "23:59" or "8:37 am"
@@ -67,15 +49,15 @@ module Stamp
 
       # build emitters from the example date
       emitters = Emitters::Composite.new
-      emitters << build_emitters(before.split(/\b/)) do |token, previous_part|
-        date_emitter(token, previous_part)
+      emitters << build_emitters(before.split(/\b/)) do |token|
+        date_emitter(token)
       end
 
       # build emitters from the example time
       unless time_example.empty?
         time_parts = time_example.scan(TIME_REGEXP).first
-        emitters << build_emitters(time_parts) do |token, previous_part|
-          time_emitter(token, previous_part)
+        emitters << build_emitters(time_parts) do |token|
+          time_emitter(token)
         end
       end
 
@@ -86,16 +68,12 @@ module Stamp
 
     # Transforms tokens that look like date/time parts to emitter objects.
     def build_emitters(tokens)
-      previous_part = nil
       tokens.map do |token|
-        emitter = yield(token, previous_part)
-        previous_part = emitter.field unless emitter.nil?
-
-        emitter || Emitters::String.new(token)
+        yield(token) || Emitters::String.new(token)
       end
     end
 
-    def time_emitter(token, previous_part)
+    def time_emitter(token)
       case token
       when MERIDIAN_LOWER_REGEXP
         Emitters::AmPm.new
@@ -104,15 +82,10 @@ module Stamp
         Emitters::AmPm.new { |v| v.upcase }
 
       when TWO_DIGIT_REGEXP
-        TWO_DIGIT_TIME_SUCCESSION[previous_part] ||
-          case token.to_i
-          when OBVIOUS_24_HOUR
-            # 24-hour clock
-            Emitters::TwoDigit.new(:hour)
-          else
-            # 12-hour clock with leading zero
-            Emitters::TwoDigit.new(:hour, &HOUR_TO_12_HOUR)
-          end
+        Emitters::Ambiguous.new(
+          two_digit_hour_emitter(token),
+          Emitters::TwoDigit.new(:min),
+          Emitters::TwoDigit.new(:sec))
 
       when ONE_DIGIT_REGEXP
         # 12-hour clock without leading zero
@@ -120,7 +93,18 @@ module Stamp
       end
     end
 
-    def date_emitter(token, previous_part)
+    def two_digit_hour_emitter(token)
+      case token.to_i
+      when OBVIOUS_24_HOUR
+        # 24-hour clock
+        Emitters::TwoDigit.new(:hour)
+      else
+        # 12-hour clock with leading zero
+        Emitters::TwoDigit.new(:hour, &HOUR_TO_12_HOUR)
+      end
+    end
+
+    def date_emitter(token)
       case token
       when MONTHNAMES_REGEXP
         Emitters::Lookup.new(:month, Date::MONTHNAMES)
@@ -146,21 +130,22 @@ module Stamp
       when TWO_DIGIT_REGEXP
         value = token.to_i
 
-        obvious_mappings =
-          OBVIOUS_DATE_MAP.reject { |k,v| v.field == previous_part }
-
-        obvious_directive = obvious_mappings.find do |range, directive|
-          break directive if range === value
+        case value
+        when OBVIOUS_DAY
+          TWO_DIGIT_DAY_EMITTER
+        when OBVIOUS_YEAR
+          TWO_DIGIT_YEAR_EMITTER
+        else
+          Emitters::Ambiguous.new(
+            TWO_DIGIT_MONTH_EMITTER,
+            TWO_DIGIT_DAY_EMITTER,
+            TWO_DIGIT_YEAR_EMITTER)
         end
 
-        # if the intent isn't obvious based on the example value, try to
-        # disambiguate based on context
-        obvious_directive ||
-          TWO_DIGIT_DATE_SUCCESSION[previous_part] ||
-          TWO_DIGIT_MONTH_EMITTER
-
       when ONE_DIGIT_REGEXP
-        Emitters::Delegate.new(:day)
+        Emitters::Ambiguous.new(
+          Emitters::Delegate.new(:month),
+          Emitters::Delegate.new(:day))
       end
     end
 
