@@ -75,10 +75,10 @@ module Stamp
     def time_emitter(token)
       case token
       when MERIDIAN_LOWER_REGEXP
-        Emitters::AmPm.new
+        Emitters::AmPm::LOWERCASE
 
       when MERIDIAN_UPPER_REGEXP
-        Emitters::AmPm.new { |v| v.upcase }
+        Emitters::AmPm::UPPERCASE
 
       when TWO_DIGIT_REGEXP
         Emitters::Ambiguous.new(

@@ -1,22 +1,21 @@
 module Stamp
   module Emitters
     class AmPm
-      include Modifiable
-
-      AM = 'am'
-      PM = 'pm'
-
-      def initialize(&block)
-        @modifier = block
+      # @param [Array<String>]values for am pm text
+      def initialize(values)
+        @values = values
       end
 
       def format(target)
-        modify(target.hour < 12 ? AM : PM)
+        @values[target.hour < 12 ? 0 : 1]
       end
 
       def field
         nil
       end
+
+      UPPERCASE = new(%w(AM PM))
+      LOWERCASE = new(%w(am pm))
     end
   end
 end
