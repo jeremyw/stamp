@@ -38,7 +38,7 @@ module Stamp
     OBVIOUS_DAY            = 13..31
     OBVIOUS_YEAR           = 32..99
 
-    TWO_DIGIT_YEAR_EMITTER  = Emitters::TwoDigit.new(:year) { |year| year % 100 }
+    TWO_DIGIT_YEAR_EMITTER  = Emitters::TwoDigit.new(:year)
     TWO_DIGIT_MONTH_EMITTER = Emitters::TwoDigit.new(:month)
     TWO_DIGIT_DAY_EMITTER   = Emitters::TwoDigit.new(:day)
 
@@ -147,6 +147,5 @@ module Stamp
           Emitters::Delegate.new(:day))
       end
     end
-
   end
 end
