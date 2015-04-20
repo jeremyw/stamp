@@ -79,7 +79,7 @@ module Stamp
         Emitters::AmPm.new
 
       when MERIDIAN_UPPER_REGEXP
-        Emitters::AmPm.new { |v| v.upcase }
+        Emitters::AmPm.new(upcase: true)
 
       when TWO_DIGIT_REGEXP
         Emitters::Ambiguous.new(

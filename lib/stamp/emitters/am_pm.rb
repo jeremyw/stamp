@@ -1,17 +1,14 @@
 module Stamp
   module Emitters
     class AmPm
-      include Modifiable
-
-      AM = 'am'
-      PM = 'pm'
-
-      def initialize(&block)
-        @modifier = block
+      # @param [Hash] options
+      # @option options [Boolean] :upcase (default: false) uppercase meridian
+      def initialize(options = {})
+        @values = options[:upcase] ? %w(AM PM) : %w(am pm)
       end
 
       def format(target)
-        modify(target.hour < 12 ? AM : PM)
+        @values[target.hour < 12 ? 0 : 1]
       end
 
       def field

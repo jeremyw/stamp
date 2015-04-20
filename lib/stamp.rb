@@ -1,7 +1,6 @@
 require "date"
 require "time"
 
-require "stamp/emitters/modifiable"
 require "stamp/emitters/am_pm"
 require "stamp/emitters/ambiguous"
 require "stamp/emitters/composite"
