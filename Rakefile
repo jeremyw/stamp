@@ -1,5 +1,6 @@
 require 'bundler/gem_tasks'
 require 'cucumber/rake/task'
+require 'rake/testtask'
 
 Cucumber::Rake::Task.new(:features)
 
@@ -7,4 +8,10 @@ Cucumber::Rake::Task.new('features:wip', 'Run Cucumber features that are a work 
   t.profile = 'wip'
 end
 
-task :default => :features
+Rake::TestTask.new(:test) do |t|
+  t.libs << "test"
+  t.libs << "lib"
+  t.pattern = "test/**/*_test.rb"
+end
+
+task :default => [:test, :features]
