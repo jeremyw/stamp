@@ -114,10 +114,10 @@ module Stamp
         Emitters::Lookup::ABBR_DAY
 
       when TIMEZONE_REGEXP
-        Emitters::Delegate.new(:zone)
+        Emitters::Delegate::ZONE
 
       when FOUR_DIGIT_REGEXP
-        Emitters::Delegate.new(:year)
+        Emitters::Delegate::YEAR
 
       when ORDINAL_DAY_REGEXP
         Emitters::Ordinal::DAY
@@ -137,8 +137,8 @@ module Stamp
 
       when ONE_DIGIT_REGEXP
         Emitters::Ambiguous.new(
-          Emitters::Delegate.new(:month),
-          Emitters::Delegate.new(:day))
+          Emitters::Delegate::MONTH,
+          Emitters::Delegate::DAY)
       end
     end
   end
