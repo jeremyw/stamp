@@ -27,6 +27,8 @@ module Stamp
           end
         end
       end
+
+      DAY = new(:day)
     end
   end
 end

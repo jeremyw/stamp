@@ -120,7 +120,7 @@ module Stamp
         Emitters::Delegate.new(:year)
 
       when ORDINAL_DAY_REGEXP
-        Emitters::Ordinal.new(:day)
+        Emitters::Ordinal::DAY
 
       when TWO_DIGIT_REGEXP
         case token.to_i
