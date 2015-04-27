@@ -17,6 +17,11 @@ module Stamp
       def lookup(value)
         @lookup[value]
       end
+
+      MONTH      = new(:month, Date::MONTHNAMES)
+      ABBR_MONTH = new(:month, Date::ABBR_MONTHNAMES)
+      DAY        = new(:wday,  Date::DAYNAMES)
+      ABBR_DAY   = new(:wday,  Date::ABBR_DAYNAMES)
     end
   end
 end

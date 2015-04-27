@@ -102,16 +102,16 @@ module Stamp
     def date_emitter(token)
       case token
       when MONTHNAMES_REGEXP
-        Emitters::Lookup.new(:month, Date::MONTHNAMES)
+        Emitters::Lookup::MONTH
 
       when ABBR_MONTHNAMES_REGEXP
-        Emitters::Lookup.new(:month, Date::ABBR_MONTHNAMES)
+        Emitters::Lookup::ABBR_MONTH
 
       when DAYNAMES_REGEXP
-        Emitters::Lookup.new(:wday, Date::DAYNAMES)
+        Emitters::Lookup::DAY
 
       when ABBR_DAYNAMES_REGEXP
-        Emitters::Lookup.new(:wday, Date::ABBR_DAYNAMES)
+        Emitters::Lookup::ABBR_DAY
 
       when TIMEZONE_REGEXP
         Emitters::Delegate.new(:zone)
