@@ -38,10 +38,6 @@ module Stamp
     OBVIOUS_DAY            = 13..31
     OBVIOUS_YEAR           = 32..99
 
-    TWO_DIGIT_YEAR_EMITTER  = Emitters::TwoDigit.new(:year)
-    TWO_DIGIT_MONTH_EMITTER = Emitters::TwoDigit.new(:month)
-    TWO_DIGIT_DAY_EMITTER   = Emitters::TwoDigit.new(:day)
-
     def translate(example)
       # extract any substrings that look like times, like "23:59" or "8:37 am"
       before, time_example, after = example.partition(TIME_REGEXP)
@@ -83,8 +79,8 @@ module Stamp
       when TWO_DIGIT_REGEXP
         Emitters::Ambiguous.new(
           two_digit_hour_emitter(token),
-          Emitters::TwoDigit.new(:min),
-          Emitters::TwoDigit.new(:sec))
+          Emitters::TwoDigit::MIN,
+          Emitters::TwoDigit::SEC)
 
       when ONE_DIGIT_REGEXP
         # 12-hour clock without leading zero
@@ -96,7 +92,7 @@ module Stamp
       case token.to_i
       when OBVIOUS_24_HOUR
         # 24-hour clock
-        Emitters::TwoDigit.new(:hour)
+        Emitters::TwoDigit::HOUR
       else
         # 12-hour clock with leading zero
         Emitters::TwelveHour::LEADING_ZERO
@@ -127,18 +123,16 @@ module Stamp
         Emitters::Ordinal.new(:day)
 
       when TWO_DIGIT_REGEXP
-        value = token.to_i
-
-        case value
+        case token.to_i
         when OBVIOUS_DAY
-          TWO_DIGIT_DAY_EMITTER
+          Emitters::TwoDigit::DAY
         when OBVIOUS_YEAR
-          TWO_DIGIT_YEAR_EMITTER
+          Emitters::TwoDigit::YEAR
         else
           Emitters::Ambiguous.new(
-            TWO_DIGIT_MONTH_EMITTER,
-            TWO_DIGIT_DAY_EMITTER,
-            TWO_DIGIT_YEAR_EMITTER)
+            Emitters::TwoDigit::MONTH,
+            Emitters::TwoDigit::DAY,
+            Emitters::TwoDigit::YEAR)
         end
 
       when ONE_DIGIT_REGEXP

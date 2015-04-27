@@ -19,6 +19,12 @@ module Stamp
           value
         end
       end
+      YEAR  = new(:year)
+      MONTH = new(:month)
+      DAY   = new(:day)
+      HOUR  = new(:hour)
+      MIN   = new(:min)
+      SEC   = new(:sec)
     end
   end
 end
