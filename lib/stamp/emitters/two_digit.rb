@@ -3,19 +3,21 @@ module Stamp
     # Emits the given field as a two-digit number with a leading
     # zero if necessary.
     class TwoDigit
-      include Modifiable
-
       attr_reader :field
 
-      # @param [field] the field to be formatted (e.g. +:month+, +:year+)
-      def initialize(field, &block)
+      # @param [String|Symbol] field the field to be formatted (e.g. +:month+, +:year+)
+      def initialize(field)
         @field = field
-        @modifier = block
       end
 
       def format(target)
-        value = modify(target.send(field))
-        value < 10 ? "0#{value}" : value
+        value = target.send(field) % 100
+        # by definition, leading_zero option is true
+        if value < 10
+          "0#{value}"
+        else
+          value
+        end
       end
     end
   end

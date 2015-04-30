@@ -3,10 +3,9 @@ module Stamp
     class Lookup
       attr_reader :field
 
-      # @param [field] the field to be formatted (e.g. +:month+, +:year+)
-      # @param [lookup] an array of the string values to be formatted (e.g. +Date::DAYNAMES+)
-      #                 or a +call+able that returns the formatted value
-      def initialize(field, lookup=nil)
+      # @param [Symbol|String] field the field to be formatted (e.g. +:month+, +:year+)
+      # @param [Array<String>] lookup an array of the string values to be formatted (e.g. +Date::DAYNAMES+)
+      def initialize(field, lookup)
         @field = field
         @lookup = lookup
       end
@@ -16,11 +15,7 @@ module Stamp
       end
 
       def lookup(value)
-        if @lookup.respond_to?(:call)
-          @lookup.call(value)
-        else
-          @lookup[value]
-        end
+        @lookup[value]
       end
     end
   end

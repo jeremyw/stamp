@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.summary     = %Q{Date and time formatting for humans.}
   s.description = %Q{Format dates and times based on human-friendly examples, not arcane strftime directives.}
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- features/*`.split("\n")
+  s.files         = `git ls-files`.split("\n").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  s.test_files    = `git ls-files -- features/* test/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 

@@ -3,11 +3,12 @@ module Stamp
     class Ordinal
       attr_reader :field
 
-      # @param [field] the field to be formatted (e.g. +:month+, +:year+)
+      # @param [Symbol|String] field the field to be formatted (e.g. +:month+, +:year+)
       def initialize(field)
         @field = field
       end
 
+      # @param [Date|Time|DateTime] target the date to be formatted
       def format(target)
         ordinalize(target.send(field))
       end
