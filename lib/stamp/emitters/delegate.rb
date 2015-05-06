@@ -12,6 +12,11 @@ module Stamp
       def format(target)
         target.send(field)
       end
+
+      ZONE  = new(:zone)
+      YEAR  = new(:year)
+      MONTH = new(:month)
+      DAY   = new(:day)
     end
   end
 end
