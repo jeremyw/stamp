@@ -48,3 +48,8 @@ end
 
 Date.send(:include, ::Stamp)
 Time.send(:include, ::Stamp)
+begin
+  require 'active_support/time'
+  ActiveSupport::TimeWithZone.send(:include, ::Stamp)
+rescue LoadError
+end

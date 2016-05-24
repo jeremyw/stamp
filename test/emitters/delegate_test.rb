@@ -5,6 +5,13 @@ class DelegateTest < Minitest::Test
     assert_equal 'UTC', e.format(Time.now.utc)
   end
 
+  def test_format_zone_current
+    e = Stamp::Emitters::Delegate::ZONE
+
+    assert_equal 'MST', e.format(Time.current.in_time_zone('MST'))
+  rescue NoMethodError
+  end
+
   def test_format_year
     e = Stamp::Emitters::Delegate::YEAR
 
