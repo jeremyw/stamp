@@ -1,8 +1,17 @@
 class DelegateTest < Minitest::Test
-  def test_format_zone
+  def test_format_zone_utc
     e = Stamp::Emitters::Delegate::ZONE
 
     assert_equal 'UTC', e.format(Time.now.utc)
+  end
+
+  def test_format_zone_local
+    e = Stamp::Emitters::Delegate::ZONE
+
+    local_time = Time.now.localtime
+    local_zone = local_time.zone # e.g.: 'EST'
+
+    assert_equal local_zone, e.format(local_time)
   end
 
   def test_format_year
