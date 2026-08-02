@@ -18,8 +18,6 @@ module Stamp
   # Formats a date/time using a human-friendly example as a template.
   #
   # @param [String] example a human-friendly date/time example
-  # @param [Hash] options
-  # @option options [Boolean] :memoize (true)
   #
   # @return [String] the formatted date or time
   #

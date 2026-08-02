@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class DelegateTest < Minitest::Test
   def test_format_zone
     e = Stamp::Emitters::Delegate::ZONE

@@ -1,3 +1,5 @@
+require 'test_helper'
+
 class LookupTest < Minitest::Test
   def test_format_month
     e = Stamp::Emitters::Lookup::MONTH

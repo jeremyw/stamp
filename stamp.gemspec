@@ -10,13 +10,18 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/jeremyw/stamp"
   s.summary     = %Q{Date and time formatting for humans.}
   s.description = %Q{Format dates and times based on human-friendly examples, not arcane strftime directives.}
+  s.license     = "MIT"
+
+  s.metadata = {
+    "source_code_uri" => "https://github.com/jeremyw/stamp",
+    "bug_tracker_uri" => "https://github.com/jeremyw/stamp/issues"
+  }
+
+  s.required_ruby_version = ">= 3.1"
 
   s.files         = `git ls-files`.split("\n").reject { |f| f.match(%r{^(test|spec|features)/}) }
-  s.test_files    = `git ls-files -- features/* test/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.add_development_dependency 'minitest'
-  s.add_development_dependency 'cucumber'
   s.add_development_dependency 'rake'
 end
