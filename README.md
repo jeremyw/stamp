@@ -140,4 +140,4 @@ Time.now.to_s(:military)  #=> "16 July 15:35"
 
 ## Copyright
 
-Copyright (c) 2011 Jeremy Weiskotten. See LICENSE.txt for further details.
+Copyright (c) 2011-2026 Jeremy Weiskotten. See LICENSE.txt for further details.
