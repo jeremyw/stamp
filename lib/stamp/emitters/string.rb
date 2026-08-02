@@ -15,6 +15,12 @@ module Stamp
         value << emitter.value
       end
 
+      # Literal text, with % escaped so strftime passes it through verbatim.
+      def strftime_directive
+        # value can be nil (unmatched optional capture groups become tokens)
+        value.to_s.gsub("%", "%%")
+      end
+
       def field
         nil
       end

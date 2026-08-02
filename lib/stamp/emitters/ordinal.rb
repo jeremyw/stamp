@@ -28,6 +28,11 @@ module Stamp
         end
       end
 
+      # strftime has no directive for ordinals ("1st", "22nd", ...)
+      def strftime_directive
+        nil
+      end
+
       DAY = new(:day)
     end
   end

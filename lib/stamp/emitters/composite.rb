@@ -17,7 +17,17 @@ module Stamp
         result
       end
 
-      def <<(emitter)    
+      # Builds the equivalent strftime format string.
+      #
+      # @raise [ArgumentError] if any emitter has no strftime equivalent
+      def strftime_format
+        emitters.map do |e|
+          e.strftime_directive ||
+            raise(ArgumentError, "#{e.class.name.split('::').last} (e.g. \"1st\") has no strftime equivalent")
+        end.join
+      end
+
+      def <<(emitter)
         Array(emitter).each { |e| emitters << e }
       end
 

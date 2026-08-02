@@ -28,6 +28,10 @@ module Stamp
 
     TIME_REGEXP            = /(\d{1,2})(:)(\d{2})(\s*)(:)?(\d{2})?(\s*)?([ap]m)?/i
 
+    # UTC offsets like "+05:00" or "-0500". The lookbehind/lookahead keep
+    # date fragments like "12-31-1999" from matching; hours are capped at 14.
+    UTC_OFFSET_REGEXP      = /(?<![-\d])[+-](?:0\d|1[0-4]):?[0-5]\d(?!\d)/
+
     MERIDIAN_LOWER_REGEXP  = /^(a|p)m$/
     MERIDIAN_UPPER_REGEXP  = /^(A|P)M$/
 
@@ -39,6 +43,17 @@ module Stamp
     OBVIOUS_YEAR           = 32..99
 
     def translate(example)
+      # extract any substrings that look like UTC offsets, like "+05:00" or
+      # "-0500", before the time logic can mistake them for clock times
+      before, offset_example, after = example.partition(UTC_OFFSET_REGEXP)
+      unless offset_example.empty?
+        emitters = Emitters::Composite.new
+        emitters << translate(before) unless before.empty?
+        emitters << (offset_example.include?(":") ? Emitters::UtcOffset::COLON : Emitters::UtcOffset::PLAIN)
+        emitters << translate(after) unless after.empty?
+        return emitters
+      end
+
       # extract any substrings that look like times, like "23:59" or "8:37 am"
       before, time_example, after = example.partition(TIME_REGEXP)
 

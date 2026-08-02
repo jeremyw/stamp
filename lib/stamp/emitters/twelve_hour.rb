@@ -27,6 +27,10 @@ module Stamp
         :hour
       end
 
+      def strftime_directive
+        leading_zero ? "%I" : "%-I"
+      end
+
       LEADING_ZERO     = new(leading_zero: true)
       NON_LEADING_ZERO = new(leading_zero: false)
     end
