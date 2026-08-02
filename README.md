@@ -58,6 +58,44 @@ time.stamp("Jan 1 at 01:00 AM")     #=> "Jun 9 at 08:52 PM"
 time.stamp("23:59 UTC")             #=> "20:52 PST"
 ```
 
+UTC offsets are recognized too, in both `+HHMM` and `+HH:MM` styles:
+
+```ruby
+time.stamp("23:59 +00:00")          #=> "20:52 -05:00"
+```
+
+### Without monkey patches
+
+If you'd rather not patch `Date` and `Time`, use the module function:
+
+```ruby
+require "stamp/core" # instead of "stamp"
+
+Stamp.format(Date.new(2011, 6, 9), "Jan 1, 1999")  #=> "Jun 9, 2011"
+```
+
+Or a refinement, scoped to the files that opt in:
+
+```ruby
+require "stamp/refinement"
+using Stamp::Refinement
+
+Date.new(2011, 6, 9).stamp("Jan 1, 1999")          #=> "Jun 9, 2011"
+```
+
+### Converting examples to strftime formats
+
+When you need the equivalent strftime string — for `Time::DATE_FORMATS`,
+I18n configs, or APIs that want a format rather than a formatted value:
+
+```ruby
+Stamp.strftime_format("Jan 1, 1999")  #=> "%b %-d, %Y"
+Stamp.strftime_format("23:59:59")     #=> "%H:%M:%S"
+```
+
+Ordinal days (e.g. "1st") have no strftime equivalent and raise an
+`ArgumentError`.
+
 ## Features
 
 * Abbreviated and full names of months and weekdays are recognized.

@@ -131,6 +131,51 @@ class TestStamp < Minitest::Test
     assert_equal '2011-12-09', date.format_like('1999-01-31')
   end
 
+  def test_module_level_format
+    assert_equal 'Dec 21, 2012', Stamp.format(Date.new(2012, 12, 21), 'Jan 1, 1999')
+  end
+
+  def test_date_with_time_example_raises_argument_error
+    error = assert_raises(ArgumentError) { Date.new(2012, 12, 21).stamp('3:00 PM') }
+    assert_match(/hour/, error.message)
+  end
+
+  def test_utc_offset_examples
+    time = Time.new(2011, 9, 8, 13, 31, 27, '-05:00')
+    assert_equal '-05:00', time.stamp('+09:00')
+    assert_equal '-0500', time.stamp('+0900')
+    assert_equal '13:31 -05:00', time.stamp('23:59 +00:00')
+    assert_equal 'Sep 8, 2011 1:31 pm -0500', time.stamp('Jan 1, 1999 8:59 am +0000')
+  end
+
+  def test_strftime_format
+    assert_equal '%b %-d, %Y', Stamp.strftime_format('Jan 1, 1999')
+    assert_equal '%A, %B %-d, %Y', Stamp.strftime_format('Tuesday, January 1, 1999')
+    assert_equal '%H:%M %Z', Stamp.strftime_format('23:59 UTC')
+    assert_equal '%H:%M %:z', Stamp.strftime_format('23:59 +00:00')
+    assert_equal 'DOB: %m-%d-%Y', Stamp.strftime_format('DOB: 12-31-1999')
+  end
+
+  def test_strftime_format_round_trips
+    DATE_EXAMPLES.each_key do |example|
+      assert_equal dt.stamp(example), dt.strftime(Stamp.strftime_format(example)),
+        "example: #{example.inspect}"
+    end
+
+    with_tz('EST') do
+      time = Time.local(2011, 2, 8, 13, 31, 27)
+      TIME_EXAMPLES.each_key do |example|
+        assert_equal time.stamp(example), time.strftime(Stamp.strftime_format(example)),
+          "example: #{example.inspect}"
+      end
+    end
+  end
+
+  def test_strftime_format_raises_on_ordinals
+    error = assert_raises(ArgumentError) { Stamp.strftime_format('November 5th') }
+    assert_match(/strftime/, error.message)
+  end
+
   private
 
   def with_tz(zone)
