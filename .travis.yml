@@ -1,6 +1,0 @@
-language: ruby
-rvm:
-  - ruby-head
-  - 2.6.4
-  - 2.5.6
-  - 2.4.7

@@ -3,7 +3,7 @@
 Format dates and times based on human-friendly examples, not arcane
 [strftime](http://strfti.me) directives.
 
-[![Build Status](https://secure.travis-ci.org/jeremyw/stamp.png)](http://travis-ci.org/jeremyw/stamp)
+[![CI](https://github.com/jeremyw/stamp/actions/workflows/ci.yml/badge.svg)](https://github.com/jeremyw/stamp/actions/workflows/ci.yml)
 
 ## Installation
 
